@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Niconne&family=Open+Sans&family=Poppins&display=swap');
+
+body {
+    width: 99%;
+    height: 95vh;
+    background-color: #20201e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+
+
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+
+}
+
+#leftTab {
+    width: 25%;
+    height: 90%;
+    float: left;
+}
+
+#fInputTitle {
+    height: 10%;
+    border: 1px solid white;
+    border-right: none;
+    border-bottom: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#f2 {
+    color: white;
+}
+
+#fInput {
+    height: 40%;
+    border: 1px solid white;
+    border-right: none;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#createPlaylistTitle {
+    height: 10%;
+    border: 1px solid white;
+    border-right: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#createPlaylist {
+    height: 40%;
+    border: 1px solid white;
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#rightTab {
+    width: 25%;
+    height: 90%;
+    float: right;
+}
+
+#playlistSelectionTitle {
+    height: 10%;
+    border: 1px solid white;
+    border-bottom: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#playlistSelection {
+    height: 90%;
+    border: 1px solid white;
+    border-bottom: none;
+}
+
+#middleTab {
+    width:49.87%;
+    height: 90%;
+    border: 1px solid white;
+    border-right: none;
+    border-bottom: none;
+    float:inline-start;
+}
+
+#top {
+    height: 10%;
+    width: 100.2%;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+
+#homeContainer, #accountContainer, #searchContainer {
+    height: 100%;
+    width: 33.3333333333333%;
+    border: 1px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#homeContainer {
+    border-left: none;
+    border-right: none;
+}
+
+#homeContainer:hover {
+    background-color: #4FB3BF;
+}
+
+#searchContainer:hover {
+    background-color: #4FB3BF;
+}
+
+#searchContainer {
+    border-left: none;
+    border-right: none;
+}
+
+#accountContainer:hover {
+    background-color: #4FB3BF;
+}
+
+#f1 {
+    color: white;
+}
+
+#displayPlaylistName {
+    height: 15%;
+    width: 100%;
+    border: 1px solid white;
+    border-right: none;
+    border-left: none;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.songsContainer {
+    height: 15%;
+    width: 100.2%;
+    border: 1px solid white;
+    color: white;
+    border-right: none;
+    border-left: none;
+}
+
+#displaySongs {
+    width: 100%;
+}
+
+.songTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.songTable th, .songTable td {
+    border: 1px solid #ddd; 
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 8px; 
+    text-align: left; 
+    border-bottom: none;
+}
+
+.s1:hover {
+    background-color: #4FB3BF;
+}
+
+#bottomTab {
+    clear: both;
+    height: 10%;
+    border: 1px solid white;
+}
+
+.pName {
+    color: white;
+    font-size:40px;
+    height: 40px;
+}
+
+.playlistTable {
+    width: 100% ;
+    border-collapse: collapse;
+}
+
+.playlistTable th, .playlistTable td {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    border: 1px solid #ddd; 
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding: 8px;
+    text-align: left; 
+
+    
+}
+
+.click {
+    text-decoration: none;
+    color: white;
+}
+
+.type {
+    display: flex;
+    flex-direction: row;
+}
+
+.Help {
+    display: inline-block;
+    font-size: 12px;
+}
+
+.Help .helpText {
+    visibility: hidden;
+    text-align: center;
+    position: absolute;
+    z-index: 1;
+    background-color: black;
+    border: 1px solid #ddd; 
+}
+
+.Help:hover .helpText {
+    visibility: visible;
+}
