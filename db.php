@@ -132,7 +132,6 @@
     {
         if (isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
         {
-            
             $playlist_name = $_POST["playlistName"];
             $playlistType = $_POST["playlistType"];
             $sql = $this->pdo->prepare("INSERT INTO playlists (playlist_name, playlistType) VALUES (:playlist_name, :playlistType)");
