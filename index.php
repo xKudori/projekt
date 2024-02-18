@@ -18,9 +18,9 @@
         <section id="leftTab">
             <div id="fInputTitle">Select File</div>
             <div id="fInput">
-                <form action="" method="post" id="f2">
+                <form action="" method="post" id="f2" enctype="multipart/form-data">
                     <label for="audio-file">Browse: </label>
-                    <input type="file" name="audio-file">
+                    <input type="file" name="audio-file" id="audio-file">
                     <br>
                     <br>
                     <label for="songName">Name:</label>
@@ -34,8 +34,6 @@
                     </div>
                     <br>
                     <br>
-                    <label for="songArt">Select Cover Art</label>
-                    <input type="file" name="songArt">
                     <br>
                     <br>
                     <button name="sendSong">Upload File</button>
@@ -46,7 +44,7 @@
             ?>
             <div id="createPlaylistTitle">Create Playlist</div>
             <div id="createPlaylist">
-                <form action="" method="post" id="f1">
+                <form action="" method="post" id="f1" enctype="multipart/form-data">
                     <label for="playlistName">Playlist name: </label>
                     <input type="text" name="playlistName">
                     <br>
@@ -108,9 +106,11 @@
                 ?>
             </div>
             <div id="displaySongs">
+                <form action="" method="post">
                     <?php                     
                         $x->songDisplayHtml();
                     ?>
+                </form>
             </div>
         </section>
         <section id="rightTab">
@@ -123,7 +123,9 @@
             </div>
         </section>
         <section id="bottomTab">
-            
+            <?php
+            $x->displayAudio();
+            ?>
         </section>
     </section>
     
