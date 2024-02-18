@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 07, 2024 at 08:47 PM
+-- Generation Time: Feb 18, 2024 at 08:38 PM
 -- Wersja serwera: 10.4.28-MariaDB
 -- Wersja PHP: 8.2.4
 
@@ -42,12 +42,14 @@ CREATE TABLE `playlists` (
 INSERT INTO `playlists` (`playlist_id`, `playlist_name`, `numOfSongs`, `createdBy`, `playlistType`) VALUES
 (1, 'Example_Playlist_Name', 23, 'fdbdf', 'Public'),
 (2, 'Example_playlist2', 3, 'user2', 'Private'),
-(3, 'exampleName3', 5, 'Name3', 'Local\r\n'),
-(28, 'test', 0, '', 'Public'),
-(29, 'test2', 0, '', 'Public'),
-(30, 'test3', 0, '', 'Public'),
-(31, 'test4', 0, '', 'Private'),
-(32, 'test6', 0, '', 'Public');
+(37, 'Test_Playlist', 0, '', 'Public'),
+(64, 'nazwa', 0, '', 'Local'),
+(65, 'grdcf', 0, '', 'Local'),
+(66, 'hcvgt', 0, '', 'Private'),
+(74, ' nhij', 0, '', 'Local'),
+(75, 'hj,b', 0, '', 'Local'),
+(76, 'ghj,b', 0, '', 'Local'),
+(77, 'thfgv', 0, '', 'Local');
 
 -- --------------------------------------------------------
 
@@ -60,18 +62,27 @@ CREATE TABLE `songs` (
   `song_name` varchar(255) NOT NULL,
   `artist` varchar(255) NOT NULL,
   `length` int(11) NOT NULL,
-  `playlist_id` int(11) NOT NULL
+  `playlist_id` int(11) NOT NULL,
+  `playlist_name` varchar(255) NOT NULL,
+  `audio_path` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `songs`
 --
 
-INSERT INTO `songs` (`song_id`, `song_name`, `artist`, `length`, `playlist_id`) VALUES
-(1, 'exampleName', 'exampleArtist', 233, 0),
-(2, 'songName4', 'artistName4', 45, 2),
-(3, 'exampleSong4', 'exampleArtist4', 128, 2),
-(4, 'exampleName5', 'exampleArtist5', 452, 1);
+INSERT INTO `songs` (`song_id`, `song_name`, `artist`, `length`, `playlist_id`, `playlist_name`, `audio_path`) VALUES
+(1, 'exampleName', 'exampleArtist', 233, 0, '', ''),
+(2, 'songName4', 'artistName4', 45, 2, '', ''),
+(3, 'exampleSong4', 'exampleArtist4', 128, 2, '', ''),
+(4, 'exampleName5', 'exampleArtist5', 452, 1, '', ''),
+(59, 'test', '', 0, 64, 'nazwa', './audio/midwest emo.mp3'),
+(60, 'testSong', '', 0, 74, ' nhij', './audio/midwest emo.mp3'),
+(61, 'test', '', 0, 77, 'thfgv', './audio/midwest emo.mp3'),
+(62, 'piano', '', 0, 64, 'nazwa', './audio/calkiem dobre piano.mp3'),
+(63, 'test', '', 0, 64, 'nazwa', './audio/calkiem dobre piano.mp3'),
+(64, 'yghjv', '', 0, 64, 'nazwa', './audio/gitara sample.mp3'),
+(65, 'dhcfgt', '', 0, 77, 'thfgv', './audio/piano demo.mp3');
 
 --
 -- Indeksy dla zrzutów tabel
@@ -97,13 +108,13 @@ ALTER TABLE `songs`
 -- AUTO_INCREMENT for table `playlists`
 --
 ALTER TABLE `playlists`
-  MODIFY `playlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `playlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `songs`
 --
 ALTER TABLE `songs`
-  MODIFY `song_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `song_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
