@@ -197,7 +197,11 @@ body {
 #bottomTab {
     clear: both;
     height: 10%;
+    width: 100%;
     border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .pName {
@@ -276,5 +280,18 @@ body {
     text-decoration: none;
     border: none;
     background-color: black;
+    color: white;
+}
+
+audio {
+    clear: both;
+    width: 40%;
+    border: 1px solid white;
+}
+
+.play {
+    background: none;
+    border: none;
+    text-decoration: none;
     color: white;
 }

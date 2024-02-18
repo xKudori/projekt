@@ -55,7 +55,7 @@
             global $a;
             $a = $a + 1;
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . $a . "</td>";
+            echo "<td class=\"songId\">" . "<button name=\"play\" class=\"play\" value=\"$song->song_name\">". $a ."</button>" ."</td>";
             echo "<td>" . $song->song_name . "</td>";
             echo "<td>" . $song->artist . "</td>";
             echo "<td>" . $song->length . "</td>";
@@ -132,17 +132,13 @@
     {
         if (isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
         {
+            
             $playlist_name = $_POST["playlistName"];
             $playlistType = $_POST["playlistType"];
             $sql = $this->pdo->prepare("INSERT INTO playlists (playlist_name, playlistType) VALUES (:playlist_name, :playlistType)");
             $sql->bindParam(":playlist_name", $playlist_name, PDO::PARAM_STR);
             $sql->bindParam(":playlistType", $playlistType, PDO::PARAM_STR);
             $sql->execute();
-            if (isset($_GET["x"])) {
-                header("Location: index.php?x=".$_GET["x"]);
-            } else {
-                header("Location: index.php");
-            }
         }
     }
     
@@ -178,17 +174,19 @@
                     foreach($playlist_id as $a) {
                         $a->playlist_id;
                     }
-                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, playlist_name, playlist_id) VALUES (:song_name, :playlist_name, :playlist_id)");
+                    
+                    $audioFileTmpName = $_FILES["audio-file"]["tmp_name"];
+
+
+                    $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
+                    move_uploaded_file($audioFileTmpName, $audioFileName);
+                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, playlist_name, playlist_id, audio_path) VALUES (:song_name, :playlist_name, :playlist_id, :audio_path)");
                     $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
                     $sql->bindParam(":playlist_name", $insertPlaylist, PDO::PARAM_STR);
                     $sql->bindParam(":playlist_id", $a->playlist_id, PDO::PARAM_INT);
+                    $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
                     $sql->execute();
-                    if (isset($_GET["x"])) {
-                        header("Location: index.php?x=".$_GET["x"]);
-                    } else {
-                        header("Location: index.php");
-                    }
-                    exit();
+
             } else {
                 echo "<div id=\"ERR\">Error</div>";
             }
@@ -224,7 +222,32 @@
     
         echo "</div>";
     }
+    private function getAudioFilePathFromDatabase() 
+    {
+        if (isset($_POST["play"])) {
+        $songName = $_POST["play"];
+        $sql = $this->pdo->prepare("SELECT audio_path FROM songs WHERE song_name = :song_name");
+        $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
+        $sql->execute();
+        $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
+        $result = $sql->fetchAll();
+        return $result;
+        }
+    }
 
+    public function displayAudio() {
+        if (isset($_POST["play"])) {
+        $a = $this->getAudioFilePathFromDatabase();
+        foreach ($a as $b) {
+            $b->audio_path;
+        }
+        echo "<audio controls>";
+        echo "<source src= "."\"".$b->audio_path."\"" . "type=\"audio/mpeg\">";
+        echo "</audio>";
+    }
+    }
 }
+
+
     
 ?>
