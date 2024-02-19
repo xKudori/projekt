@@ -160,7 +160,7 @@
 
 
     public function getSongData() {
-            if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"])) 
+            if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"]) && isset($_POST["audio-file"])) 
             {
                 $p = $this->getPlaylistType();
                 foreach ($p as $b) {
