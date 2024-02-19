@@ -118,16 +118,34 @@
             <div class="userPlaylists">Your playlists</div>
             <div id="playlistSelection">
                 <?php
-                $x->displayPlaylistsHtml();
+                    $x->displayPlaylistsHtml();
                 ?>
             </div>
         </section>
         <section id="bottomTab">
-            <?php
-            $x->displayAudio();
-            ?>
+            <button id="play">Play</button>
+            <button id="stop">Stop</button>
+            <input type="range" min="0" max="1" step="0.01" id= "vol">
         </section>
     </section>
-    
+    <script>
+        let play = document.getElementById("play");
+        let pause = document.getElementById("stop");
+        let vol = document.getElementById("vol");
+        let audio = new Audio("<?php $x->displayAudio()?>");
+        function playAudio() {
+            audio.play()
+        }
+        function stopAudio() {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        function audioVolume() {
+            audio.volume = parseFloat(vol.value);
+        }
+        play.addEventListener("click", playAudio);
+        pause.addEventListener("click",stopAudio);
+        vol.addEventListener("input", audioVolume);
+    </script>
 </body>
 </html>

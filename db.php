@@ -241,9 +241,7 @@
         foreach ($a as $b) {
             $b->audio_path;
         }
-        echo "<audio controls>";
-        echo "<source src= "."\"".$b->audio_path."\"" . "type=\"audio/mpeg\">";
-        echo "</audio>";
+        echo "$b->audio_path";
     }
     }
 }
