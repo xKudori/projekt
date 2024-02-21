@@ -35,7 +35,6 @@
                     <br>
                     <br>
                     <br>
-                    <br>
                     <button name="sendSong">Upload File</button>
                 </form>
             </div>
@@ -133,6 +132,11 @@
         let pause = document.getElementById("stop");
         let vol = document.getElementById("vol");
         let audio = new Audio("<?php $x->displayAudio()?>");
+        let container = document.getElementById("length");
+        var length = audio.duration();
+        var m = Math.floor(duration/60);
+        var s = Math.floor(duration % 60);
+        var actualLength = m + ":" + s;
         function playAudio() {
             audio.play();
         }
