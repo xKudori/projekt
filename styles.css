@@ -69,6 +69,7 @@ body {
     border-top: none;
     border-bottom: none;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -271,7 +272,7 @@ body {
     justify-content: center;
 }
 
-#ERR {
+.ERR {
     display: flex;
     justify-content: center;
     align-items: center;

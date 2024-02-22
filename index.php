@@ -48,10 +48,10 @@
                     <input type="text" name="playlistName">
                     <br>
                     <br>
-                    <label for="cover-art">Cover art: </label>
-                    <input type="file" name="cover-art">
+                    <!--<label for="cover-art">Cover art: </label>
+                    <input type="file" name="cover-art">-
                     <br>
-                    <br>
+                    <br>-->
                     <label>Playlist type: </label>
                     <br>
                     <div class="type">
@@ -82,11 +82,11 @@
                     <br>
                     <button name="Create">Create</button>
                 </form>
+                <?php
+                    $x->getPlaylistData();
+                ?> 
             </div>
-        </section>    
-        <?php
-            $x->getPlaylistData();
-        ?>      
+        </section>         
         <section id="middleTab">
             <div id="top">
                 <div id="homeContainer">
@@ -133,10 +133,7 @@
         let vol = document.getElementById("vol");
         let audio = new Audio("<?php $x->displayAudio()?>");
         let container = document.getElementById("length");
-        var length = audio.duration();
-        var m = Math.floor(duration/60);
-        var s = Math.floor(duration % 60);
-        var actualLength = m + ":" + s;
+
         function playAudio() {
             audio.play();
         }
