@@ -129,8 +129,18 @@
         return $sql->fetchAll();
     }
     public function getPlaylistData() 
-    {
-        if (isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
+    {   
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (!isset($_POST["playlistName"]) && !isset($_POST["playlistType"])) 
+        {
+            echo "<div class=\"ERR\">Please input the correct options</div>";
+        } else if (isset($_POST["playlistName"]) && !isset($_POST["playlistType"])) {
+
+            echo "<div class=\"ERR\">Please input the playlist name</div>";
+        } else if (!isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
+        {
+            echo "<div class=\"ERR\">Please input the playlist type</div>";
+        } else if (isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
         {
             
             $playlist_name = $_POST["playlistName"];
@@ -140,6 +150,7 @@
             $sql->bindParam(":playlistType", $playlistType, PDO::PARAM_STR);
             $sql->execute();
         }
+    }
     }
     
     private function getPIDFromPlaylists() 
@@ -160,8 +171,22 @@
 
 
     public function getSongData() {
-            if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"]) && isset($_POST["audio-file"])) 
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            if ((!isset($_POST["songName"]) || empty($_POST["songName"])) && !isset($_POST["insertPlaylist"]) && empty($_FILES["audio-file"]["name"])) 
             {
+                echo "<div class=\"ERR\">Please input the correct options</div>";
+            } else if ((!isset($_POST["songName"]) || empty($_POST["songName"])) && isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
+            {
+                echo "<div class=\"ERR\">Please input a song name</div>";
+            } else if (isset($_POST["songName"]) && !isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
+            {
+                echo "<div class=\"ERR\">Error: Please input a playlist.</div>";
+            } else if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"]) && empty($_FILES["audio-file"]["name"])) 
+            {
+                echo "<div class=\"ERR\">Error: Please input a file.</div>";
+            } else if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
+            {
+
                 $p = $this->getPlaylistType();
                 foreach ($p as $b) {
                     $b->playlistType;
@@ -186,13 +211,12 @@
                     $sql->bindParam(":playlist_id", $a->playlist_id, PDO::PARAM_INT);
                     $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
                     $sql->execute();
-
-            } else {
-                echo "<div id=\"ERR\">Error</div>";
-            }
+                } 
+        } else {
+            echo "<div class=\"ERR\">Please input the correct options</div>";
         }
         }
-    
+    }
     private function getLocalPlaylists() 
     {
         $sql = $this->pdo->prepare("SELECT playlist_name, playlistType FROM playlists WHERE playlistType =" . "\""."Local"."\"");
