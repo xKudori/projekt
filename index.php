@@ -114,12 +114,21 @@
         </section>
         <section id="rightTab">
             <div id="playlistSelectionTitle">Playlist Selection</div>
-            <div class="userPlaylists">Your playlists</div>
+                <div class="userPlaylists">
+                    Your playlists
+                    <form method="post">
+                        <button id="sortButton" name="sort">(Sort)</button>
+                    </form>
+                </div>
             <div id="playlistSelection">
                 <?php
                     $x->displayPlaylistsHtml();
                 ?>
+                <div class="userPlaylists">
+                    Liked playlists
+                </div>
             </div>
+
         </section>
         <section id="bottomTab">
             <button id="playBtn">Play</button>

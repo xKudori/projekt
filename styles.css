@@ -300,3 +300,14 @@ audio {
     color: white;
 }
 
+#sortButton {
+    text-decoration: none;
+    border: none;
+    color: white;
+    background-color: #20201e;
+    font-size: 9px;
+}
+
+#sortButton:hover {
+    text-decoration: underline;
+}
