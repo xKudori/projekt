@@ -10,6 +10,7 @@
     public $haslo;
     public $nazwa_bazy;
 
+
     public function __construct($adres,$nazwa_bazy,$nazwa,$haslo) {
         $this->pdo = new PDO("mysql:host=$adres;dbname=$nazwa_bazy", $nazwa, $haslo);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
@@ -99,28 +100,42 @@
         return $sql->fetchAll();
     }
 
+    private function sortedPlaylists() {
+        $sql = $this->pdo->prepare("SELECT * FROM playlists ORDER BY playlistType");
+        $sql->execute();
+        $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
+        return $sql->fetchAll();
+    }
+
     public function displayPlaylistsHtml() 
     {
         $playlist = $this->playlists();
-        
+        $sortedPlaylist = $this->sortedPlaylists();
         echo "<div class=\"playlistsContainer\">";
         echo "<table class=\"playlistTable\">";
         echo "<thead>";
         echo "</thead>";
         echo "<tbody>";
-    
+
+        if (isset($_POST["sort"])) {
+        foreach ($sortedPlaylist as $p) {
+            echo "<tr class=\"s1\">";
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . "</a>" . "</td>";
+            echo "</tr>";
+        }
+        } else {
         foreach ($playlist as $p) {
             echo "<tr class=\"s1\">";
             echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . "</a>" . "</td>";
             echo "</tr>";
         }
-    
+    }
         echo "</tbody>";
         echo "</table>";
     
         echo "</div>";
-    }
 
+}
     public function getLastRecord() 
     {
         $sql = $this->pdo->prepare("SELECT playlist_name FROM playlists WHERE playlist_id = 1");
@@ -130,14 +145,14 @@
     }
     public function getPlaylistData() 
     {   
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        if (!isset($_POST["playlistName"]) && !isset($_POST["playlistType"])) 
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["Create"])) {
+        if ((!isset($_POST["playlistName"]) || empty($_POST["playlistName"])) && !isset($_POST["playlistType"])) 
         {
             echo "<div class=\"ERR\">Please input the correct options</div>";
-        } else if (isset($_POST["playlistName"]) && !isset($_POST["playlistType"])) {
+        } else if ((!isset($_POST["playlistName"]) || empty($_POST["playlistName"])) && isset($_POST["playlistType"])) {
 
             echo "<div class=\"ERR\">Please input the playlist name</div>";
-        } else if (!isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
+        } else if (isset($_POST["playlistName"]) && !isset($_POST["playlistType"])) 
         {
             echo "<div class=\"ERR\">Please input the playlist type</div>";
         } else if (isset($_POST["playlistName"]) && isset($_POST["playlistType"])) 
@@ -171,7 +186,7 @@
 
 
     public function getSongData() {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["sendSong"])) {
             if ((!isset($_POST["songName"]) || empty($_POST["songName"])) && !isset($_POST["insertPlaylist"]) && empty($_FILES["audio-file"]["name"])) 
             {
                 echo "<div class=\"ERR\">Please input the correct options</div>";
@@ -225,6 +240,7 @@
         return $sql->fetchAll();
     }
 
+
     public function displayLocalPlaylists() 
     {
         $playlist = $this->getLocalPlaylists();
@@ -267,6 +283,11 @@
         }
         echo "$b->audio_path";
     }
+    }
+
+    public function sortPlaylists() 
+    {
+
     }
 }
 
