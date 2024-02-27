@@ -289,6 +289,39 @@
     {
 
     }
+
+    public function formDisplay() 
+    {
+
+        if (!isset($_POST["btn1"]) && !isset($_POST["btn2"]) && !isset($_POST["songName"]) && !isset($_POST["insertPlaylist"]) && !isset($_POST["sendSong"])) 
+        {
+            echo "<button name=\"btn1\">Upload Song</button>
+            <button name=\"btn2\">Upload files to Local Playlist</button>";
+        }
+        if(!isset($_POST["btn1"])  && isset($_POST["btn2"]) || (isset($_POST["songName"]) || isset($_POST["insertPlaylist"]) || isset($_POST["sendSong"]))) 
+        {
+            echo "<label for=\"audio-file\">Browse: </label>
+            <input type=\"file\" name=\"audio-file\" id=\"audio-file\" accept=\".ogg, .flac, .mp3\">
+            <br>
+            <br>
+            <label for=\"songName\">Name:</label>
+            <input type=\"text\" name=\"songName\">
+            <br>
+            <br>
+            <label for=\"insertPlaylist\" id=\"playlistSelect\">Select a local playlist to insert the song into</label>
+            <br>
+            <div class=\"Help\">List of avilable playlists
+                <span class=\"helpText\">";
+                echo $this->displayLocalPlaylists();
+                echo "</span>
+            </div>
+            <br>
+            <br>
+            <br>
+            <button name=\"sendSong\">Upload File</button>";
+        }
+    
+    }
 }
 
 
