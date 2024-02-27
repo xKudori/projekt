@@ -19,23 +19,9 @@
             <div id="fInputTitle">Select File</div>
             <div id="fInput">
                 <form action="" method="post" id="f2" enctype="multipart/form-data">
-                    <label for="audio-file">Browse: </label>
-                    <input type="file" name="audio-file" id="audio-file" accept=".ogg, .flac, .mp3">
-                    <br>
-                    <br>
-                    <label for="songName">Name:</label>
-                    <input type="text" name="songName">
-                    <br>
-                    <br>
-                    <label for="insertPlaylist" id="playlistSelect">Select a local playlist to insert the song into</label>
-                    <br>
-                    <div class="Help">List of avilable playlists
-                        <span class="helpText"><?php $x->displayLocalPlaylists() ?></span>
-                    </div>
-                    <br>
-                    <br>
-                    <br>
-                    <button name="sendSong">Upload File</button>
+                    <?php 
+                        $x->formDisplay(); 
+                    ?>
                 </form>
             </div>
             <?php
