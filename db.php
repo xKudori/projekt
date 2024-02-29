@@ -209,7 +209,6 @@
                 $temp = $b->playlistType;
                 if ($temp == "Local") {
                     $songName = $_POST["songName"];
-                    $insertPlaylist = $_POST["insertPlaylist"];
                     $playlist_id = $this->getPIDFromPlaylists();
                     foreach($playlist_id as $a) {
                         $a->playlist_id;
@@ -220,9 +219,8 @@
 
                     $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
                     move_uploaded_file($audioFileTmpName, $audioFileName);
-                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, playlist_name, playlist_id, audio_path) VALUES (:song_name, :playlist_name, :playlist_id, :audio_path)");
+                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, playlist_id, audio_path) VALUES (:song_name, :playlist_id, :audio_path)");
                     $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
-                    $sql->bindParam(":playlist_name", $insertPlaylist, PDO::PARAM_STR);
                     $sql->bindParam(":playlist_id", $a->playlist_id, PDO::PARAM_INT);
                     $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
                     $sql->execute();
@@ -293,13 +291,14 @@
     public function formDisplay() 
     {
 
-        if (!isset($_POST["btn1"]) && !isset($_POST["btn2"]) && !isset($_POST["songName"]) && !isset($_POST["insertPlaylist"]) && !isset($_POST["sendSong"])) 
+        if ((!isset($_POST["btn1"]) && !isset($_POST["btn2"]) && !isset($_POST["songName"]) && !isset($_POST["insertPlaylist"]) && !isset($_POST["sendSong"])) || isset($_POST["esc"])) 
         {
             echo "<button name=\"btn1\">Upload Song</button>
             <button name=\"btn2\">Upload files to Local Playlist</button>";
         }
-        if(!isset($_POST["btn1"])  && isset($_POST["btn2"]) || (isset($_POST["songName"]) || isset($_POST["insertPlaylist"]) || isset($_POST["sendSong"]))) 
+        if((!isset($_POST["btn1"])  && isset($_POST["btn2"]) || (isset($_POST["songName"]) || isset($_POST["insertPlaylist"]) || isset($_POST["sendSong"]))) && !isset($_POST["esc"])) 
         {
+            echo "<button name=\"esc\">Back</button> <br>";
             echo "<label for=\"audio-file\">Browse: </label>
             <input type=\"file\" name=\"audio-file\" id=\"audio-file\" accept=\".ogg, .flac, .mp3\">
             <br>
@@ -320,7 +319,9 @@
             <br>
             <button name=\"sendSong\">Upload File</button>";
         }
-    
+        if ((isset($_POST["btn1"]) && !isset($_POST["btn2"])) && !isset($_POST["esc"])) {
+            echo "<button name=\"esc\">Back</button> <br>"; 
+        }
     }
 }
 
