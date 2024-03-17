@@ -20,16 +20,34 @@
         $this->pdo = null;
     }
 
-    private function song() {
+
+    private function getSongIdFromPlaylistSongs() {
         if (isset($_GET["x"])) 
         {
-            $sId = $_GET["x"];
-            $sql = $this->pdo->prepare("SELECT * FROM songs WHERE playlist_id=$sId");
+            $pId = $_GET["x"];
+            $sql = $this->pdo->prepare("SELECT song_id FROM playlist_songs WHERE playlist_id=$pId");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
             return $sql->fetchAll();
+        } 
+    } 
+    private function song() {
+        if (isset($_GET["x"])) {
+            $sIds = $this->getSongIdFromPlaylistSongs();
+    
+            $songs = array();
+    
+            foreach ($sIds as $sId) {
+                $sql = $this->pdo->prepare("SELECT * FROM songs WHERE song_id=:sId");
+                $sql->bindParam(":sId", $sId->song_id, PDO::PARAM_INT);
+                $sql->execute();
+                $sql->setFetchMode(PDO::FETCH_CLASS, "Songs");
+                $songs[] = $sql->fetch();
+            }
+    
+            return $songs;
         } else {
-            $sql = $this->pdo->prepare("SELECT * FROM songs WHERE playlist_id=1");
+            $sql = $this->pdo->prepare("SELECT * FROM songs WHERE song_id=1");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
             return $sql->fetchAll();
@@ -44,7 +62,7 @@
         echo "<table class=\"songTable\">";
         echo "<thead>";
         echo "<tr>";
-        echo "<th>ID</th>";
+        echo "<th></th>";
         echo "<th>Name</th>";
         echo "<th>Artist</th>";
         echo "<th>Length</th>";
@@ -56,10 +74,13 @@
             global $a;
             $a = $a + 1;
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<button name=\"play\" class=\"play\" value=\"$song->song_name\">". $a ."</button>" ."</td>";
+            echo "<td class=\"songId\">" . "<button name=\"play\" class=\"play\" value=\"$song->song_name\">". $a .".</button>" ."</td>";
             echo "<td>" . $song->song_name . "</td>";
             echo "<td>" . $song->artist . "</td>";
             echo "<td>" . $song->length . "</td>";
+            echo "<td>" . "<div class=\"Help\">" . "..." . "<span class=\"helpText\">"; 
+            echo $this->changeLocalPlaylists(); 
+            echo "</span>" . "</div>". "</td>";
             echo "</tr>";
         }  
         echo "</tbody>";
@@ -184,7 +205,6 @@
         return $sql->fetchAll();
     }
 
-
     public function getSongData() {
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["sendSong"])) {
             if ((!isset($_POST["songName"]) || empty($_POST["songName"])) && !isset($_POST["insertPlaylist"]) && empty($_FILES["audio-file"]["name"])) 
@@ -201,7 +221,6 @@
                 echo "<div class=\"ERR\">Error: Please input a file.</div>";
             } else if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
             {
-
                 $p = $this->getPlaylistType();
                 foreach ($p as $b) {
                     $b->playlistType;
@@ -209,26 +228,45 @@
                 $temp = $b->playlistType;
                 if ($temp == "Local") {
                     $songName = $_POST["songName"];
-                    $playlist_id = $this->getPIDFromPlaylists();
-                    foreach($playlist_id as $a) {
-                        $a->playlist_id;
-                    }
-                    
                     $audioFileTmpName = $_FILES["audio-file"]["tmp_name"];
-
-
                     $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
-                    move_uploaded_file($audioFileTmpName, $audioFileName);
-                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, playlist_id, audio_path) VALUES (:song_name, :playlist_id, :audio_path)");
+    
+                    // Dodaj piosenkę do tabeli songs
+                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, audio_path) VALUES (:song_name, :audio_path)");
                     $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
-                    $sql->bindParam(":playlist_id", $a->playlist_id, PDO::PARAM_INT);
                     $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
                     $sql->execute();
+    
+                    // Pobierz song_id nowo dodanej piosenki
+                    $songId = $this->pdo->lastInsertId();
+    
+                    // Dodaj wpis do tabeli playlist_songs
+                    $playlistId = $this->getPlaylistIdByName($_POST["insertPlaylist"]);
+                    $this->addSongToPlaylist($songId, $playlistId);
                 } 
-        } else {
-            echo "<div class=\"ERR\">Please input the correct options</div>";
+            } else {
+                echo "<div class=\"ERR\">Please input the correct options</div>";
+            } 
         }
-        }
+    }
+
+
+    
+    // Funkcja pobierająca playlist_id po nazwie playlisty
+    private function getPlaylistIdByName($playlistName) {
+        $sql = $this->pdo->prepare("SELECT playlist_id FROM playlists WHERE playlist_name = :playlist_name");
+        $sql->bindParam(":playlist_name", $playlistName, PDO::PARAM_STR);
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        return $result['playlist_id'];
+    }
+    
+    // Funkcja dodająca piosenkę do playlisty w tabeli playlist_songs
+    private function addSongToPlaylist($songId, $playlistId) {
+        $sql = $this->pdo->prepare("INSERT INTO playlist_songs (song_id, playlist_id) VALUES (:song_id, :playlist_id)");
+        $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+        $sql->bindParam(":playlist_id", $playlistId, PDO::PARAM_INT);
+        $sql->execute();
     }
     private function getLocalPlaylists() 
     {
@@ -238,6 +276,51 @@
         return $sql->fetchAll();
     }
 
+    public function changeLocalPlaylists() 
+    {
+        $playlist = $this->getLocalPlaylists();
+        
+        echo "<div class=\"playlistsContainer\">";
+        echo "<table class=\"playlistTable\">";
+        echo "<thead>";
+        echo "</thead>";
+        echo "<tbody>";
+    
+        foreach ($playlist as $p) {
+            echo "<tr class=\"s1\">";
+            echo "<form method=\"post\">";
+            echo "<td class=\"songId\">"; 
+            echo "<input type=\"button\" name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\"> </input>" . "</td>";
+            echo "</form>";
+            echo "</tr>";
+        }
+    
+        echo "</tbody>";
+        echo "</table>";
+    
+        echo "</div>";
+        //insertPlaylistChange();
+    }
+
+    // private function getSongId() {
+    //     $sql = $this->pdo->prepare("SELECT song_id FROM songs WHERE playlistType =" . "\""."Local"."\"");
+    //     $sql->execute();
+    //     $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
+    //     return $sql->fetchAll();
+    // }
+    // private function insertPlaylistChange() 
+    // {
+    //     if (isset($_POST["insertIntoPlaylist"])) {
+    //         $playlistId = $_POST["insertIntoPlaylist"];
+    //         $songId = 
+    //         $sql = $this->pdo->prepare("INSERT INTO playlist_songs (song_id, playlist_id) VALUES (:song_id, :playlist_id)");
+    //         $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+    //         $sql->bindParam(":playlist_id", $playlistId, PDO::PARAM_INT);
+    //         $sql->execute();
+    //     }
+    // }
+
+   
 
     public function displayLocalPlaylists() 
     {
@@ -283,10 +366,7 @@
     }
     }
 
-    public function sortPlaylists() 
-    {
 
-    }
 
     public function formDisplay() 
     {
