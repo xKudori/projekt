@@ -73,6 +73,7 @@
         foreach ($songs as $song) {
             global $a;
             $a = $a + 1;
+            $pId = $_GET["x"];
             $songId = $song->song_id;
             echo "<tr class=\"s1\">";
             echo "<td class=\"songId\">" . "<button name=\"play\" class=\"play\" value=\"$song->song_name\">". $a .".</button>" ."</td>";
@@ -95,21 +96,22 @@
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
-                //echo "<input type=\"hidden\" name=\"hiddenPlaylistId\" value=\"$p->playlist_id\"></input>";
-                //echo "<input type=\"hidden\" name=\"hiddenSongId\" value=\"$song->song_id\"></input>";
+                //echo "<button name=\"deleteSong\" class=\"localTitle\">Delete Song</button>" . "</td>";
+                //echo "<button name=\"changeSongName\" class=\"localTitle\">Change Name</button>" . "</td>";
                 echo "</form>";
                 echo "</tr>";
             }
-            echo "<tr class=\"s1\">";
-            echo "<td>Delete Song</d>"; 
-            echo "</tr>";
-            echo "<tr class=\"s1\">";
-            echo "<td>Change Name</d>"; 
-            echo "</tr>";
-            if (isset($_POST["insertIntoPlaylist"])) {
-                $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
-                $this->addSongToPlaylist($songId,$playlistId);
-            }
+            echo "<form method=\"post\">";
+                echo "<tr class=\"s1\">";
+                echo "<a href=\"index.php?x=$pId\">";
+                echo "<button name=\"deleteSong\" class=\"localTitle\">Delete Song</button>" . "</td>"; 
+                echo "</a>";
+                echo "</tr>";
+                echo "<tr class=\"s1\">";
+                echo "<button name=\"changeSongName\" class=\"localTitle\">Change Name</button>" . "</td>";
+                echo "</tr>";
+            echo "</form>";
+
             echo "</tbody>";
             echo "</table>";
         
@@ -121,8 +123,28 @@
         echo "</tbody>";
         echo "</table>";
         echo "</div>";
+        if (isset($_POST["insertIntoPlaylist"])) {
+            $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
+            $this->addSongToPlaylist($songId,$playlistId);
+        }
+        if (isset($_POST["deleteSong"])) {
+            $this->deleteSongFromPlaylistSongs($songId);
+            $this->deleteSong($songId);
+        }
     }
     
+    private function deleteSong($songId) {
+        $sql = $this->pdo->prepare("DELETE FROM songs WHERE song_id = (:song_id)");
+        $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+        $sql->execute();
+    }
+    private function deleteSongFromPlaylistSongs($songId) {
+        $sql = $this->pdo->prepare("DELETE FROM playlist_songs WHERE song_id = (:song_id)");
+        $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+        $sql->execute();
+    }
+    
+
     private function playlist_name() 
     {
         if (isset($_GET["x"])) 
@@ -349,12 +371,7 @@
         //insertPlaylistChange();
     }
 */
-    // private function getSongId() {
-    //     $sql = $this->pdo->prepare("SELECT song_id FROM songs WHERE playlistType =" . "\""."Local"."\"");
-    //     $sql->execute();
-    //     $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
-    //     return $sql->fetchAll();
-    // }
+
      private function insertPlaylistChange() 
      {
          if (isset($_POST["insertIntoPlaylist"])) {
