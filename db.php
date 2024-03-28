@@ -81,7 +81,7 @@
             echo "<td>" . $song->length . "</td>";
             echo "<td>" . "<div class=\"Help\">" . "..." . "<span class=\"helpText\">"; 
             //echo $this->changeLocalPlaylists(); 
-            $playlist = $this->getLocalPlaylists();
+            $playlist = $this->getNewLocalPlaylists();
             
             echo "<div class=\"playlistsContainer\">";
             echo "<table class=\"playlistTable\">";
@@ -99,12 +99,17 @@
                 //echo "<input type=\"hidden\" name=\"hiddenSongId\" value=\"$song->song_id\"></input>";
                 echo "</form>";
                 echo "</tr>";
-
-
             }
-            $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
-            $this->addSongToPlaylist($songId,$playlistId);
-            
+            echo "<tr class=\"s1\">";
+            echo "<td>Delete Song</d>"; 
+            echo "</tr>";
+            echo "<tr class=\"s1\">";
+            echo "<td>Change Name</d>"; 
+            echo "</tr>";
+            if (isset($_POST["insertIntoPlaylist"])) {
+                $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
+                $this->addSongToPlaylist($songId,$playlistId);
+            }
             echo "</tbody>";
             echo "</table>";
         
@@ -261,16 +266,13 @@
                     $audioFileTmpName = $_FILES["audio-file"]["tmp_name"];
                     $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
     
-                    // Dodaj piosenkę do tabeli songs
                     $sql = $this->pdo->prepare("INSERT INTO songs (song_name, audio_path) VALUES (:song_name, :audio_path)");
                     $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
                     $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
                     $sql->execute();
-    
-                    // Pobierz song_id nowo dodanej piosenki
+
                     $songId = $this->pdo->lastInsertId();
     
-                    // Dodaj wpis do tabeli playlist_songs
                     $playlistId = $this->getPlaylistIdByName($_POST["insertPlaylist"]);
                     $this->addSongToPlaylist($songId, $playlistId);
                 } 
@@ -298,9 +300,24 @@
         $sql->bindParam(":playlist_id", $playlistId, PDO::PARAM_INT);
         $sql->execute();
     }
+
+    // pobiera tylko lokalne playlisty 
     private function getLocalPlaylists() 
     {
         $sql = $this->pdo->prepare("SELECT playlist_id,playlist_name, playlistType FROM playlists WHERE playlistType =" . "\""."Local"."\"");
+        $sql->execute();
+        $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
+        return $sql->fetchAll();
+    }
+
+    // pobiera lokalne playlisty, do których dana piosenka może być insertowana
+    private function getNewLocalPlaylists() 
+    {
+        $pname = $this->playlist_name();
+        foreach ($pname as $a) {
+            $a->playlist_name;
+        }
+        $sql = $this->pdo->prepare("SELECT playlist_id,playlist_name, playlistType FROM playlists WHERE playlistType =" . "\""."Local"."\"" . " AND playlist_name != \"$a->playlist_name\"");
         $sql->execute();
         $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
         return $sql->fetchAll();
