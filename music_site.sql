@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 18, 2024 at 08:38 PM
--- Wersja serwera: 10.4.28-MariaDB
--- Wersja PHP: 8.2.4
+-- Generation Time: Mar 26, 2024 at 11:42 AM
+-- Wersja serwera: 10.4.32-MariaDB
+-- Wersja PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,16 +40,31 @@ CREATE TABLE `playlists` (
 --
 
 INSERT INTO `playlists` (`playlist_id`, `playlist_name`, `numOfSongs`, `createdBy`, `playlistType`) VALUES
-(1, 'Example_Playlist_Name', 23, 'fdbdf', 'Public'),
-(2, 'Example_playlist2', 3, 'user2', 'Private'),
-(37, 'Test_Playlist', 0, '', 'Public'),
-(64, 'nazwa', 0, '', 'Local'),
-(65, 'grdcf', 0, '', 'Local'),
-(66, 'hcvgt', 0, '', 'Private'),
-(74, ' nhij', 0, '', 'Local'),
-(75, 'hj,b', 0, '', 'Local'),
-(76, 'ghj,b', 0, '', 'Local'),
-(77, 'thfgv', 0, '', 'Local');
+(83, 'bruh', 0, '', 'Local'),
+(84, 'bruh2', 0, '', 'Local'),
+(85, 'chuj', 0, '', 'Public'),
+(86, 'dfghj', 0, '', 'Local');
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `playlist_songs`
+--
+
+CREATE TABLE `playlist_songs` (
+  `playlist_id` int(11) NOT NULL,
+  `song_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `playlist_songs`
+--
+
+INSERT INTO `playlist_songs` (`playlist_id`, `song_id`) VALUES
+(83, 111),
+(83, 112),
+(83, 114),
+(84, 113);
 
 -- --------------------------------------------------------
 
@@ -62,8 +77,6 @@ CREATE TABLE `songs` (
   `song_name` varchar(255) NOT NULL,
   `artist` varchar(255) NOT NULL,
   `length` int(11) NOT NULL,
-  `playlist_id` int(11) NOT NULL,
-  `playlist_name` varchar(255) NOT NULL,
   `audio_path` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -71,18 +84,11 @@ CREATE TABLE `songs` (
 -- Dumping data for table `songs`
 --
 
-INSERT INTO `songs` (`song_id`, `song_name`, `artist`, `length`, `playlist_id`, `playlist_name`, `audio_path`) VALUES
-(1, 'exampleName', 'exampleArtist', 233, 0, '', ''),
-(2, 'songName4', 'artistName4', 45, 2, '', ''),
-(3, 'exampleSong4', 'exampleArtist4', 128, 2, '', ''),
-(4, 'exampleName5', 'exampleArtist5', 452, 1, '', ''),
-(59, 'test', '', 0, 64, 'nazwa', './audio/midwest emo.mp3'),
-(60, 'testSong', '', 0, 74, ' nhij', './audio/midwest emo.mp3'),
-(61, 'test', '', 0, 77, 'thfgv', './audio/midwest emo.mp3'),
-(62, 'piano', '', 0, 64, 'nazwa', './audio/calkiem dobre piano.mp3'),
-(63, 'test', '', 0, 64, 'nazwa', './audio/calkiem dobre piano.mp3'),
-(64, 'yghjv', '', 0, 64, 'nazwa', './audio/gitara sample.mp3'),
-(65, 'dhcfgt', '', 0, 77, 'thfgv', './audio/piano demo.mp3');
+INSERT INTO `songs` (`song_id`, `song_name`, `artist`, `length`, `audio_path`) VALUES
+(111, 'example1', '', 0, './audio/gitara_bit.mp3'),
+(112, 'xd', '', 0, './audio/gitara_bit.mp3'),
+(113, 'ghj', '', 0, './audio/gitara_bit.mp3'),
+(114, 'qwertyuio', '', 0, './audio/gitara_bit.mp3');
 
 --
 -- Indeksy dla zrzutów tabel
@@ -93,6 +99,13 @@ INSERT INTO `songs` (`song_id`, `song_name`, `artist`, `length`, `playlist_id`, 
 --
 ALTER TABLE `playlists`
   ADD PRIMARY KEY (`playlist_id`);
+
+--
+-- Indeksy dla tabeli `playlist_songs`
+--
+ALTER TABLE `playlist_songs`
+  ADD PRIMARY KEY (`playlist_id`,`song_id`),
+  ADD KEY `song_id` (`song_id`);
 
 --
 -- Indeksy dla tabeli `songs`
@@ -108,15 +121,27 @@ ALTER TABLE `songs`
 -- AUTO_INCREMENT for table `playlists`
 --
 ALTER TABLE `playlists`
-  MODIFY `playlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `playlist_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT for table `songs`
 --
 ALTER TABLE `songs`
-  MODIFY `song_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `song_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `playlist_songs`
+--
+ALTER TABLE `playlist_songs`
+  ADD CONSTRAINT `playlist_songs_ibfk_1` FOREIGN KEY (`playlist_id`) REFERENCES `playlists` (`playlist_id`),
+  ADD CONSTRAINT `playlist_songs_ibfk_2` FOREIGN KEY (`song_id`) REFERENCES `songs` (`song_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
