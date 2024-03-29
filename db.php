@@ -75,8 +75,9 @@
             $a = $a + 1;
             $pId = $_GET["x"];
             $songId = $song->song_id;
+            $songName = $song->song_name;
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<button name=\"play\" class=\"play\" value=\"$song->song_name\">". $a .".</button>" ."</td>";
+            echo "<td class=\"songId\">" . "<button name=\"play\" class=\"play\" value=\"$songName\">". $a .".</button>" ."</td>";
             echo "<td>" . $song->song_name . "</td>";
             echo "<td>" . $song->artist . "</td>";
             echo "<td>" . $song->length . "</td>";
@@ -96,8 +97,6 @@
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
-                //echo "<button name=\"deleteSong\" class=\"localTitle\">Delete Song</button>" . "</td>";
-                //echo "<button name=\"changeSongName\" class=\"localTitle\">Change Name</button>" . "</td>";
                 echo "</form>";
                 echo "</tr>";
             }
@@ -108,28 +107,27 @@
                 echo "</a>";
                 echo "</tr>";
                 echo "<tr class=\"s1\">";
-                echo "<button name=\"changeSongName\" class=\"localTitle\">Change Name</button>" . "</td>";
+                echo "<input type=\"text\" name=\"changeSongName\" class=\"localTitle\" placeholder=\"Change Name\"></input>" . "</td>";
                 echo "</tr>";
             echo "</form>";
-
             echo "</tbody>";
             echo "</table>";
-        
             echo "</div>";
-            //insertPlaylistChange();
             echo "</span>" . "</div>". "</td>";
             echo "</tr>";
         }  
         echo "</tbody>";
         echo "</table>";
         echo "</div>";
-        if (isset($_POST["insertIntoPlaylist"])) {
+        if (isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) {
             $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
             $this->addSongToPlaylist($songId,$playlistId);
-        }
-        if (isset($_POST["deleteSong"])) {
+        } if (isset($_POST["deleteSong"]) && empty($_POST["changeSongName"])) {
             $this->deleteSongFromPlaylistSongs($songId);
             $this->deleteSong($songId);
+        } if (isset($_POST["changeSongName"]) && !empty($_POST["changeSongName"])) {
+            $newSongName = $_POST["changeSongName"];
+            $this->changeSongName($newSongName);
         }
     }
     
@@ -144,6 +142,11 @@
         $sql->execute();
     }
     
+    private function changeSongName($newSongName) {
+        $sql = $this->pdo->prepare("UPDATE songs SET song_name = (:song_name)");
+        $sql->bindParam(":song_name", $newSongName, PDO::PARAM_STR);
+        $sql->execute();
+    }
 
     private function playlist_name() 
     {
@@ -210,7 +213,6 @@
     }
         echo "</tbody>";
         echo "</table>";
-    
         echo "</div>";
 
 }
