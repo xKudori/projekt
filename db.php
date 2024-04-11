@@ -20,7 +20,43 @@
         $this->pdo = null;
     }
 
+    public function checkIfUserExists($username, $email) {
+        $sql = "SELECT COUNT(*) FROM users WHERE username = :username OR email = :email";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(":username", $username, PDO::PARAM_STR);
+        $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
 
+        return $count > 0; 
+    }
+
+    public function loginUser($username, $password, $email) {
+        $sql = $this->pdo->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
+        $sql->bindParam(":username", $username, PDO::PARAM_STR);
+        $sql->bindParam(":email", $email, PDO::PARAM_STR);
+        $sql->execute();
+    
+        $user = $sql->fetch(PDO::FETCH_ASSOC);
+    
+        if ($user ==  true) {
+            if (password_verify($password, $user['password'])) {
+                return true; 
+            }
+        } else {
+            return false; 
+        }
+    }
+
+    public function registerUser($username, $password, $email) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(":username", $username, PDO::PARAM_STR);
+        $stmt->bindParam(":password", $hashedPassword, PDO::PARAM_STR);
+        $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+        $stmt->execute();
+    }
     private function getSongIdFromPlaylistSongs() {
         if (isset($_GET["x"])) 
         {
@@ -54,10 +90,58 @@
         }
     }
 
+    private function userSong() {
+        if (isset($_GET["x"])) {
+            $sIds = $this->getSongIdFromPlaylistSongs();
+            $user = $_SESSION["username"];
+            $songs = array();
+    
+            foreach ($sIds as $sId) {
+
+                $sql = $this->pdo->prepare("SELECT * FROM songs WHERE song_id=:sId AND user = :user");
+                $sql->bindParam(":sId", $sId->song_id, PDO::PARAM_INT);
+                $sql->bindParam(":user", $user, PDO::PARAM_STR);
+                $sql->execute();
+                $sql->setFetchMode(PDO::FETCH_CLASS, "Songs");
+                $songs[] = $sql->fetch();
+            }
+    
+            return $songs;
+        } else {
+            $sql = $this->pdo->prepare("SELECT * FROM songs WHERE song_id=1 AND user = :user");
+            $sql->bindParam(":user", $user, PDO::PARAM_STR);
+            $sql->execute();
+            $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
+            return $sql->fetchAll();
+        }
+    }
+
+    private function pTypeFromId($pId) {
+            $sql = $this->pdo->prepare("SELECT playlistType FROM playlists WHERE playlist_id = $pId");
+            $sql->execute();
+            $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
+            return $sql->fetchAll();
+    }
+
     public function songDisplayHtml() 
-    {
+    { 
         $songs = $this->song();
         $a = 0;
+        if (isset($_GET["x"])) {
+            $x = $_GET["x"];
+            $pType = $this->pTypeFromId($x);
+            foreach ($pType as $pT) {
+                $pT->playlistType;
+            }
+    
+            if ($pT->playlistType == "Local") {
+                $tempVal = true;
+            } else {
+                $tempVal = false;
+            }    
+        }
+
+
         echo "<div class=\"songsContainer\">";
         echo "<table class=\"songTable\">";
         echo "<thead>";
@@ -66,10 +150,11 @@
         echo "<th>Name</th>";
         echo "<th>Artist</th>";
         echo "<th>Length</th>";
+        echo "<th></th>";
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
-    
+    if (isset($pType)) {
         foreach ($songs as $song) {
             global $a;
             $a = $a + 1;
@@ -82,71 +167,123 @@
             echo "<td>" . $song->artist . "</td>";
             echo "<td>" . $song->length . "</td>";
             echo "<td>" . "<div class=\"Help\">" . "..." . "<span class=\"helpText\">"; 
-            //echo $this->changeLocalPlaylists(); 
-            $playlist = $this->getNewLocalPlaylists();
-            
+            $localPlaylist = $this->getNewLocalPlaylists($songId);
+            $publicOrPrivatePlaylist = $this->getPublicOrPrivatePlaylist($songId);
             echo "<div class=\"playlistsContainer\">";
             echo "<table class=\"playlistTable\">";
             echo "<thead>";
             echo "</thead>";
             echo "<tbody>";
-        
-            foreach ($playlist as $p) {
-                //if ($p->playlist_name == )
+        if ($tempVal == true) {
+            foreach ($localPlaylist as $p) {
+
                 echo "<tr class=\"s1\">";
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
+                echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
+                echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
                 echo "</form>";
                 echo "</tr>";
             }
+        } else {
+            foreach ($publicOrPrivatePlaylist as $p) {
+
+                echo "<tr class=\"s1\">";
+                echo "<form method=\"post\">";
+                echo "<td class=\"songId\">"; 
+                echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
+                echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
+                echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
+                echo "</form>";
+                echo "</tr>";
+        }
+    }
+            if ($tempVal == true) {
             echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
-                echo "<a href=\"index.php?x=$pId\">";
-                echo "<button name=\"deleteSong\" class=\"localTitle\">Delete Song</button>" . "</td>"; 
-                echo "</a>";
+                echo "<button name=\"deleteSong\" class=\"localTitle\" value=\"$songId\">Delete Song</button>" . "</td>"; 
+                echo "</tr>";
+                echo "<tr class=\"s1\">";
+                echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
+                echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
                 echo "</tr>";
                 echo "<tr class=\"s1\">";
                 echo "<input type=\"text\" name=\"changeSongName\" class=\"localTitle\" placeholder=\"Change Name\"></input>" . "</td>";
+                echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
                 echo "</tr>";
             echo "</form>";
+            } else {
+                echo "<form method=\"post\">";
+                echo "<tr class=\"s1\">";
+                echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
+                echo "</tr>";
+            echo "</form>";
+            }
             echo "</tbody>";
             echo "</table>";
             echo "</div>";
             echo "</span>" . "</div>". "</td>";
             echo "</tr>";
         }  
+    }
         echo "</tbody>";
         echo "</table>";
         echo "</div>";
+    
         if (isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) {
+            $songId = $_POST["insertSongId"];
             $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
             $this->addSongToPlaylist($songId,$playlistId);
+            echo "<script>window.location.href = './index.php?x=$pId';</script>"; //header nie dziala :(
         } if (isset($_POST["deleteSong"]) && empty($_POST["changeSongName"])) {
-            $this->deleteSongFromPlaylistSongs($songId);
-            $this->deleteSong($songId);
-        } if (isset($_POST["changeSongName"]) && !empty($_POST["changeSongName"])) {
-            $newSongName = $_POST["changeSongName"];
-            $this->changeSongName($newSongName);
+            $newSongId = $_POST["deleteSong"];
+            $this->deleteSongFromPlaylistSongs($newSongId);
+            $this->deleteSong($newSongId);
+            echo "<script>window.location.href = './index.php?x=$pId';</script>";
+        } else if (isset($_POST["removeSong"]) && empty($_POST["changeSongName"])) {
+            $newSongId = $_POST["removeSong"];
+            $removepId = $_POST["removepId"];
+            $this->deleteSongFromOnePlaylistSongs($newSongId,$removepId);
+            echo "<script>window.location.href = './index.php?x=$pId';</script>";
         }
+        
+        if (isset($_POST["changeSongName"]) && !empty($_POST["changeSongName"])) {
+            $newSongName = $_POST["changeSongName"];
+            $newSongId = $_POST["changeSongId"];
+            $this->changeSongName($newSongName, $newSongId);
+            echo "<script>window.location.href = './index.php?x=$pId';</script>";
+        }
+    
     }
     
-    private function deleteSong($songId) {
+    
+    private function deleteSong($newSongId) {
         $sql = $this->pdo->prepare("DELETE FROM songs WHERE song_id = (:song_id)");
-        $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+        $sql->bindParam(":song_id", $newSongId, PDO::PARAM_INT);
         $sql->execute();
     }
-    private function deleteSongFromPlaylistSongs($songId) {
+    private function deleteSongFromPlaylistSongs($newSongId) {
         $sql = $this->pdo->prepare("DELETE FROM playlist_songs WHERE song_id = (:song_id)");
-        $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+        $sql->bindParam(":song_id", $newSongId, PDO::PARAM_INT);
         $sql->execute();
-    }
+    } 
     
-    private function changeSongName($newSongName) {
-        $sql = $this->pdo->prepare("UPDATE songs SET song_name = (:song_name)");
-        $sql->bindParam(":song_name", $newSongName, PDO::PARAM_STR);
+    private function deleteSongFromOnePlaylistSongs($newSongId,$removepId) {
+        $sql = $this->pdo->prepare("DELETE FROM playlist_songs WHERE song_id = (:song_id) AND playlist_id = (:playlist_id)");
+        $sql->bindParam(":song_id", $newSongId, PDO::PARAM_INT);
+        $sql->bindparam(":playlist_id", $removepId, PDO::PARAM_INT);
+        $sql->execute();
+    } 
+
+    private function changeSongName($newSongName, $newSongId) {
+        $sql = $this->pdo->prepare("UPDATE songs SET song_name = (:new_song_name) WHERE song_ID = (:song_id)");
+        $sql->bindParam(":new_song_name", $newSongName, PDO::PARAM_STR);
+        $sql->bindParam(":song_id", $newSongId, PDO::PARAM_INT);
         $sql->execute();
     }
+
+    
 
     private function playlist_name() 
     {
@@ -181,6 +318,15 @@
         return $sql->fetchAll();
     }
 
+    private function userPlaylist() {
+        $user = $_SESSION["username"];
+        $sql = $this->pdo->prepare("SELECT * FROM playlists WHERE user = (:user)");
+        $sql->bindParam(":user", $user, PDO::PARAM_STR);
+        $sql->execute();
+        $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
+        return $sql->fetchAll();
+    }
+
     private function sortedPlaylists() {
         $sql = $this->pdo->prepare("SELECT * FROM playlists ORDER BY playlistType");
         $sql->execute();
@@ -190,7 +336,7 @@
 
     public function displayPlaylistsHtml() 
     {
-        $playlist = $this->playlists();
+        $playlist = $this->userPlaylist();
         $sortedPlaylist = $this->sortedPlaylists();
         echo "<div class=\"playlistsContainer\">";
         echo "<table class=\"playlistTable\">";
@@ -240,9 +386,11 @@
             
             $playlist_name = $_POST["playlistName"];
             $playlistType = $_POST["playlistType"];
-            $sql = $this->pdo->prepare("INSERT INTO playlists (playlist_name, playlistType) VALUES (:playlist_name, :playlistType)");
+            $user = $_SESSION["username"];
+            $sql = $this->pdo->prepare("INSERT INTO playlists (playlist_name, playlistType, user) VALUES (:playlist_name, :playlistType, :user)");
             $sql->bindParam(":playlist_name", $playlist_name, PDO::PARAM_STR);
             $sql->bindParam(":playlistType", $playlistType, PDO::PARAM_STR);
+            $sql->bindParam(":user", $user, PDO::PARAM_STR);
             $sql->execute();
         }
     }
@@ -255,6 +403,8 @@
         $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
         return $sql->fetchAll();
     }
+
+
 
     private function getPlaylistType() 
     {
@@ -289,10 +439,13 @@
                     $songName = $_POST["songName"];
                     $audioFileTmpName = $_FILES["audio-file"]["tmp_name"];
                     $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
+                    $user = $_SESSION["username"];
     
-                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, audio_path) VALUES (:song_name, :audio_path)");
+                    $sql = $this->pdo->prepare("INSERT INTO songs (song_name, audio_path, user) VALUES (:song_name, :audio_path, :user)");
                     $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
                     $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
+                    $sql->bindParam(":user", $user, PDO::PARAM_STR);
+
                     $sql->execute();
 
                     $songId = $this->pdo->lastInsertId();
@@ -308,7 +461,6 @@
 
 
     
-    // pobiera playlist_id po nazwie playlisty
     private function getPlaylistIdByName($playlistName) {
         $sql = $this->pdo->prepare("SELECT playlist_id FROM playlists WHERE playlist_name = :playlist_name");
         $sql->bindParam(":playlist_name", $playlistName, PDO::PARAM_STR);
@@ -317,7 +469,6 @@
         return $result['playlist_id'];
     }
     
-    // dodaje piosenkę do playlisty w tabeli playlist_songs
     private function addSongToPlaylist($songId, $playlistId) {
         $sql = $this->pdo->prepare("INSERT INTO playlist_songs (song_id, playlist_id) VALUES (:song_id, :playlist_id)");
         $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
@@ -325,7 +476,6 @@
         $sql->execute();
     }
 
-    // pobiera tylko lokalne playlisty 
     private function getLocalPlaylists() 
     {
         $sql = $this->pdo->prepare("SELECT playlist_id,playlist_name, playlistType FROM playlists WHERE playlistType =" . "\""."Local"."\"");
@@ -334,17 +484,49 @@
         return $sql->fetchAll();
     }
 
-    // pobiera lokalne playlisty, do których dana piosenka może być insertowana
-    private function getNewLocalPlaylists() 
-    {
+    private function getPublicOrPrivatePlaylist() {
         $pname = $this->playlist_name();
+        $user = $_SESSION["username"];
         foreach ($pname as $a) {
             $a->playlist_name;
         }
-        $sql = $this->pdo->prepare("SELECT playlist_id,playlist_name, playlistType FROM playlists WHERE playlistType =" . "\""."Local"."\"" . " AND playlist_name != \"$a->playlist_name\"");
+        $sql = $this->pdo->prepare("
+        SELECT playlist_id, playlist_name, playlistType 
+        FROM playlists 
+        WHERE (playlistType = 'Public' OR playlistType = 'Private') AND user = '$user'
+        AND playlist_id NOT IN (
+            SELECT playlist_id 
+            FROM playlist_songs 
+            WHERE song_id = :song_id
+        ) 
+    ");
+        $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
         $sql->execute();
         $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
         return $sql->fetchAll();
+    }
+
+    private function getNewLocalPlaylists($songId) 
+    {
+        $pname = $this->playlist_name();
+        $user = $_SESSION["username"];
+        foreach ($pname as $a) {
+            $a->playlist_name;
+        }
+        $sql = $this->pdo->prepare("
+        SELECT playlist_id, playlist_name, playlistType 
+        FROM playlists 
+        WHERE playlistType = 'Local' AND user = '$user'
+        AND playlist_id NOT IN (
+            SELECT playlist_id 
+            FROM playlist_songs 
+            WHERE song_id = :song_id
+        )
+    ");
+    $sql->bindParam(":song_id", $songId, PDO::PARAM_INT);
+    $sql->execute();
+    $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
+    return $sql->fetchAll();
     }
 
   /*  public function changeLocalPlaylists() 
