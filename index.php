@@ -1,8 +1,11 @@
 <?php
-
+    session_start();
     require("./db.php");
     $x = new Db_Connection("localhost","music_site","root","");
-    
+    if (!isset($_SESSION['username'])) {
+        header("Location: login.php");
+        exit();
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,9 +81,9 @@
                 <div id="homeContainer">
                     Home
                 </div>
-                <div id="accountContainer">
+                <a href="./account.php" id="accountContainer">
                     Account
-                </div>
+                </a>
                 <div id="searchContainer">
                     Search
                 </div>
@@ -92,7 +95,8 @@
             </div>
             <div id="displaySongs">
                 <form action="" method="post">
-                    <?php                     
+                    <?php                   
+                    $tempVal=1;  
                         $x->songDisplayHtml();
                     ?>
                 </form>
