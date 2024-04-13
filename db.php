@@ -217,6 +217,8 @@
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
+                echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
+                echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
                 echo "</tr>";
             echo "</form>";
             }

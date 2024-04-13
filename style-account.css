@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Niconne&family=Open+Sans&family=Poppins&display=swap');
+
+body {
+    width: 99%;
+    height: 95vh;
+    background-color: #000;
+    font-family: 'Lato', sans-serif;
+    color: #CED8E0;
+}
+
+#bottomTab {
+    height: 5%;
+    width: 100%;
+    border: 1px solid #60017B;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#middleTab {
+    width: 49.87%;
+    height: 90%;
+    float: inline-start;
+    color: #CED8E0;
+}
+
+#top {
+    height: 10%;
+    width: 100.2%;
+    color: #CED8E0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #60017B;
+    border-left: none;
+    border-right: none;
+}
+
+#accountContainer {
+    text-decoration: none;
+    color: #CED8E0;
+    border-right: none;
+}
+
+#homeContainer, #accountContainer, #searchContainer {
+    height: 100%;
+    width: 33.3333333333333%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #CED8E0;
+}
+
+#homeContainer:hover, #searchContainer:hover, #accountContainer:hover {
+    background-color: #60017B;
+}
+
+#homeContainer {
+    border-left: none;
+    border-right: none;
+}
+
+#searchContainer {
+    border-left: none;
+    border-right: none;
+}
+
