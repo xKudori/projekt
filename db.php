@@ -285,7 +285,18 @@
         $sql->execute();
     }
 
-    
+    public function countSong($user) {
+        $sql = $this->pdo->prepare("SELECT COUNT(song_name) AS song_count FROM songs WHERE user = \"$user\"");
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        return "<p>Songs Uploaded: " . $result['song_count'] . "</p>";
+    }
+    public function countPlaylists($user) {
+        $sql = $this->pdo->prepare("SELECT COUNT(playlist_name) AS playlist_count FROM playlists WHERE user = \"$user\" AND playlistType = \"Public\"");
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        return "<p>Playlists Created: " . $result['playlist_count'] . "</p>";
+    }
 
     private function playlist_name() 
     {
@@ -443,6 +454,8 @@
                     $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
                     $user = $_SESSION["username"];
     
+                    move_uploaded_file($audioFileTmpName,$audioFileName);
+
                     $sql = $this->pdo->prepare("INSERT INTO songs (song_name, audio_path, user) VALUES (:song_name, :audio_path, :user)");
                     $sql->bindParam(":song_name", $songName, PDO::PARAM_STR);
                     $sql->bindParam(":audio_path", $audioFileName, PDO::PARAM_STR);
@@ -486,7 +499,7 @@
         return $sql->fetchAll();
     }
 
-    private function getPublicOrPrivatePlaylist() {
+    private function getPublicOrPrivatePlaylist($songId) {
         $pname = $this->playlist_name();
         $user = $_SESSION["username"];
         foreach ($pname as $a) {
@@ -530,33 +543,6 @@
     $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
     return $sql->fetchAll();
     }
-
-  /*  public function changeLocalPlaylists() 
-    {
-        $playlist = $this->getLocalPlaylists();
-        
-        echo "<div class=\"playlistsContainer\">";
-        echo "<table class=\"playlistTable\">";
-        echo "<thead>";
-        echo "</thead>";
-        echo "<tbody>";
-    
-        foreach ($playlist as $p) {
-            echo "<tr class=\"s1\">";
-            echo "<form method=\"post\">";
-            echo "<td class=\"songId\">"; 
-            echo "<input type=\"button\" name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\"> </input>" . "</td>";
-            echo "</form>";
-            echo "</tr>";
-        }
-    
-        echo "</tbody>";
-        echo "</table>";
-    
-        echo "</div>";
-        //insertPlaylistChange();
-    }
-*/
 
      private function insertPlaylistChange() 
      {
