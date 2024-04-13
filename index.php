@@ -120,9 +120,11 @@
 
         </section>
         <section id="bottomTab">
-            <button id="playBtn">Play</button>
-            <button id="pauseBtn">Pause</button>
+            <button id="playBtn">&#9658;</button>
+            <button id="pauseBtn">&#10074;&#10074;</button>
+            <h2> PROGRESS </h2>
             <input type="range" min="0" max="100" step="1" id="seekSlider">
+            <h2> VOLUME </h2>
             <input type="range" min="0" max="1" step="0.01" id="vol">
         </section>
     <script>

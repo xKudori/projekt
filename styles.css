@@ -177,6 +177,39 @@ font-weight: normal;
   align-items: center;
 }
 
+input[type="range"] {
+    margin-right: 30px;
+}
+
+#pauseBtn {
+    margin-right: 30px;
+}
+
+#seekSlider {
+    -webkit-appearance: none;
+    width: 50%;
+    height: 10px;
+    background-color: rgb(24, 9, 92);
+    border-radius: 5px;
+}
+
+/* Styl uchwytu suwaka z id "seekSlider" w przeglądarkach opartych na silniku WebKit */
+#seekSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #007bff;
+    border-radius: 50%;
+}
+
+/* Styl uchwytu suwaka z id "seekSlider" w przeglądarkach opartych na silniku Gecko (np. Firefox) */
+#seekSlider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background-color: #007bff;
+    border-radius: 50%;
+}
+
 .pName {
     font-size: 40px;
     height: 40px;
