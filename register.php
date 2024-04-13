@@ -7,15 +7,16 @@
     <title>Document</title>
 </head>
 <body>
-<h2>Register</h2>
-    <form action="regHandler.php" method="post">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br>
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" required><br><br>
-        <input type="submit" value="Register">
+<h1 class="logtext">Register</h1>
+    <form action="regHandler.php" class="fl" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button value="Register">Register</button>
     </form>
+    <a href="login.php" class="loginf">Login to an existing account</a>
 </body>
 </html>

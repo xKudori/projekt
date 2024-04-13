@@ -121,30 +121,39 @@
         </section>
         <section id="bottomTab">
             <button id="playBtn">Play</button>
-            <button id="stop">Stop</button>
-            <input type="range" min="0" max="1" step="0.01" id= "vol">
+            <button id="pauseBtn">Pause</button>
+            <input type="range" min="0" max="100" step="1" id="seekSlider">
+            <input type="range" min="0" max="1" step="0.01" id="vol">
         </section>
-    </section>
     <script>
         let playBtn = document.getElementById("playBtn");
-        let pause = document.getElementById("stop");
+        let pauseBtn = document.getElementById("pauseBtn");
+        let seekSlider = document.getElementById("seekSlider");
         let vol = document.getElementById("vol");
         let audio = new Audio("<?php $x->displayAudio()?>");
-        let container = document.getElementById("length");
 
         function playAudio() {
             audio.play();
         }
-        function stopAudio() {
+        function pauseAudio() {
             audio.pause();
-            audio.currentTime = 0;
         }
         function audioVolume() {
             audio.volume = parseFloat(vol.value);
         }
+        function updateSeekSlider(){
+            let newPosition = (audio.currentTime / audio.duration) * 100;
+            seekSlider.value = newPosition;
+        }
+        function seekAudio() {
+            let newPosition = audio.duration * (seekSlider.value / 100);
+            audio.currentTime = newPosition;
+        }
+        seekSlider.addEventListener("input", seekAudio)
         playBtn.addEventListener("click", playAudio);
-        pause.addEventListener("click",stopAudio);
+        pauseBtn.addEventListener("click",pauseAudio);
         vol.addEventListener("input", audioVolume);
+        audio.addEventListener("timeupdate", updateSeekSlider);
     </script>
 </body>
 </html>
