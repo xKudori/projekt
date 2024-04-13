@@ -81,6 +81,11 @@ body {
     border-right: none;
 }
 
+#accountContainer {
+    text-decoration: none;
+    color: #CED8E0;
+}
+
 #homeContainer, #accountContainer, #searchContainer {
     height: 100%;
     
