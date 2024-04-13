@@ -431,10 +431,10 @@
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["sendSong"])) {
             if ((!isset($_POST["songName"]) || empty($_POST["songName"])) && !isset($_POST["insertPlaylist"]) && empty($_FILES["audio-file"]["name"])) 
             {
-                echo "<div class=\"ERR\">Please input the correct options</div>";
+                echo "<div class=\"ERR\"\>Please input the correct options</div>";
             } else if ((!isset($_POST["songName"]) || empty($_POST["songName"])) && isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
             {
-                echo "<div class=\"ERR\">Please input a song name</div>";
+                echo "<div class=\"ERR\"\>Please input a song name</div>";
             } else if (isset($_POST["songName"]) && !isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
             {
                 echo "<div class=\"ERR\">Error: Please input a playlist.</div>";
@@ -447,13 +447,12 @@
                 foreach ($p as $b) {
                     $b->playlistType;
                 }
-                $temp = $b->playlistType;
+$temp = $b->playlistType;
                 if ($temp == "Local") {
                     $songName = $_POST["songName"];
                     $audioFileTmpName = $_FILES["audio-file"]["tmp_name"];
                     $audioFileName = "./audio/".$_FILES["audio-file"]["name"];
                     $user = $_SESSION["username"];
-    
                     move_uploaded_file($audioFileTmpName,$audioFileName);
 
                     $sql = $this->pdo->prepare("INSERT INTO songs (song_name, audio_path, user) VALUES (:song_name, :audio_path, :user)");
@@ -464,7 +463,7 @@
                     $sql->execute();
 
                     $songId = $this->pdo->lastInsertId();
-    
+
                     $playlistId = $this->getPlaylistIdByName($_POST["insertPlaylist"]);
                     $this->addSongToPlaylist($songId, $playlistId);
                 } 
