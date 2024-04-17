@@ -181,8 +181,9 @@ input[type="range"] {
 }
 
 #pauseBtn {
-    margin-right: 30px;
+    margin-right: 5px;
 }
+
 
 #seekSlider {
     -webkit-appearance: none;
@@ -192,7 +193,7 @@ input[type="range"] {
     border-radius: 5px;
 }
 
-/* Styl uchwytu suwaka z id "seekSlider" w przeglądarkach opartych na silniku WebKit */
+
 #seekSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 20px;
@@ -201,7 +202,7 @@ input[type="range"] {
     border-radius: 50%;
 }
 
-/* Styl uchwytu suwaka z id "seekSlider" w przeglądarkach opartych na silniku Gecko (np. Firefox) */
+
 #seekSlider::-moz-range-thumb {
     width: 20px;
     height: 20px;
@@ -291,7 +292,8 @@ button{
 } 
 
 #playBtn{
-  margin-right: 5px;
+  margin-right: 1px;
+  margin-left: 5px;
 }
 
 #sortButton{
@@ -301,5 +303,15 @@ button{
 input, textarea {
   background-color: #000000;
   color: skyblue;
-  
 }
+
+#displayUserName {
+    width: 100%;
+    border-bottom: 1px solid #60017B;
+}
+
+#username {
+    font-size: 50px;
+    margin: 0 20px 0 0; 
+}
+
