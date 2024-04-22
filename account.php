@@ -99,7 +99,33 @@
                 ?>
                 </p>
             </div>
-            tutaj tabela
+            <div id="displayTables">
+                <table id="userPublicPlaylists">
+                <thead>
+                    <tr>
+                        <th><?php echo $_SESSION["username"]?>'s Public Playlists</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $x->displayPublicPlaylists();
+                    ?>
+                </tbody>
+            </table>
+            <table id="userUploadedSongs">
+                <thead>
+                    <tr>
+                        <th><?php echo $_SESSION["username"]?>'s Songs</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $tempVal=1;  
+                        $x->songDisplayHtml();
+                    ?>
+                </tbody>
+            </table>
+        </div>
         </section>
         <section id="rightTab">
             <div id="playlistSelectionTitle">Playlist Selection</div>

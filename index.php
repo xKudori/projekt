@@ -80,7 +80,7 @@
                 <div id="homeContainer">
                     Home
                 </div>
-                <a href="./account.php" id="accountContainer">
+                <a href="./account.php?x=<?=$_SESSION["username"]?>&t=true" id="accountContainer">
                     Account
                 </a>
                 <div id="searchContainer">
