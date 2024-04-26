@@ -6,6 +6,7 @@
         header("Location: login.php");
         exit();
     }
+    $user = $_SESSION['username'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,14 +78,14 @@
         </section>         
         <section id="middleTab">
             <div id="top">
-                <div id="homeContainer">
+                <a href="./index.php" id="homeContainer">
                     Home
-                </div>
-                <a href="./account.php?x=<?=$_SESSION["username"]?>&t=true" id="accountContainer">
+                </a>
+                <a href="./account.php" id="accountContainer">
                     Account
                 </a>
                 <div id="searchContainer">
-                <form method="post">
+                    <form method="post">
                         <label for="searchQuery">Search</label>
                         <input type="text" name="searchQuery">
                     </form>
@@ -96,19 +97,40 @@
                     ?>
                 </div>
             </div> 
-            <div id="displayPlaylistName">
-                <?php
-                    $x->playlistNameDisplayHtml();
+            
+            <div id="songsTitle">   
+            <form method="post">
+                <button name="songSearchDisplay" class="btn" id="songSearchDisplay" value="Songs">Songs</button>
+                <button name="playlistSearchDisplay" class="btn" id="playlistSearchDisplay" value="Playlists">Playlists</button>
+                <button name="userSearchDisplay" class="btn" id="userSearchDisplay" value="Users">Users</button> 
+            </form>
+            <?php
+                if (isset($_POST["songSearchDisplay"])) {
+                    echo "<div id=\"currentDisplay\">Songs</div>";
+                }
+                else if (isset($_POST["playlistSearchDisplay"])) {
+                    echo "<div id=\"currentDisplay\">Playlists</div>";
+                } 
+                else if (isset($_POST["userSearchDisplay"])) {
+                    echo "<div id=\"currentDisplay\">Users</div>";   
+                }
+                else {
+                    echo "<div id=\"currentDisplay\"></div>";   
+                }
+                
                 ?>
             </div>
-            <div class="displaySongs">
-                <form action="" method="post">
-                    <?php                   
-                    $tempVal=1;  
-                        $x->songDisplayHtml();
-                    ?>
-                </form>
-            </div>
+            <?php
+            if (isset($_POST["songSearchDisplay"])) {
+                $x->songDisplayHtml();
+            }
+            if (isset($_POST["playlistSearchDisplay"])) {
+                $x->playlistQueryDisplay();
+            } 
+            if (isset($_POST["userSearchDisplay"])) {
+                $x->userDisplayHtml();
+            }
+            ?>
         </section>
         <section id="rightTab">
             <div id="playlistSelectionTitle">Playlist Selection</div>
@@ -126,8 +148,8 @@
                     Liked playlists
                 </div>
             </div>
-
         </section>
+        <a href="logout.php">Logout</a>
         <section id="bottomTab">
             <button id="previous">&#9666;</button>
             <button id="playBtn">&#9658;</button>
@@ -148,7 +170,23 @@
         let previous = document.getElementById("previous");
         let next = document.getElementById("next");
 
- 
+        /*
+        const songs = document.getElementById("songSearchDisplay");
+        const playlists = document.getElementById("playlistSearchDisplay");
+        const users = document.getElementById("userSearchDisplay");
+
+        songs.addEventListener("click", function() {
+            document.getElementById("currentDisplay").innerHTML = songs.value;
+        });
+
+        playlists.addEventListener("click", function() {
+            document.getElementById("currentDisplay").innerHTML = playlists.value;
+        });
+
+        users.addEventListener("click", function() {
+            document.getElementById("currentDisplay").innerHTML = users.value;
+        });
+*/
         function playSong(index) {
             let filePath = playBtns[index].value;
             audio.src = filePath;
