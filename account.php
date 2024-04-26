@@ -85,33 +85,54 @@
                     Account
                 </a>
                 <div id="searchContainer">
-                    Search
+                    <form method="post">
+                        <label for="searchQuery">Search</label>
+                        <input type="text" name="searchQuery">
+                    </form>
+                    <?php
+                        if (isset($_POST["searchQuery"])) {
+                            $s = $_POST["searchQuery"];
+                            echo "<script>window.location.href = './search.php?query=$s';</script>"; 
+                        }
+                    ?>
                 </div>
             </div> 
-            <div id="displayUserName">
-                <p id="username">
-                    <?=$_SESSION["username"]?>
-                </p>
-                <p id="userInfo">
-                <?php
-                    echo $x->countSong($user);
-                    echo $x->countPlaylists($user);
-                ?>
-                </p>
+            <div id="displayContainer">
+                <div id="displayUserName">
+                    <p id="username">
+                        <?=$_SESSION["username"]?>
+                    </p>
+                    <p id="userInfo">
+                    <?php
+                        echo $x->countSong($user);
+                        echo $x->countPlaylists($user);
+                    ?>
+                    </p>
+                </div>
+                <div id="displayChoice">
+                    <form method="post">
+                        <button class="btn" name="PublishedSongs">Songs</button>
+                        <button class="btn" name="PublicPlaylists">Public Playlists</button>
+                    </form>
+                </div>
             </div>
             <div id="displayTables">
-                <table id="userPublicPlaylists">
-                <thead>
-                    <tr>
-                        <th><?php echo $_SESSION["username"]?>'s Public Playlists</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                        $x->displayPublicPlaylists();
-                    ?>
-                </tbody>
-            </table>
+                <?php
+                    if (isset($_POST["PublicPlaylists"])) {
+                        echo "<table id=\"userPublicPlaylists\">
+                        <thead>
+                            <tr>
+                                <th>$user's Public Playlists</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
+                            $x->displayPublicPlaylists();
+                        echo "</tbody>
+                    </table>";
+                    }
+            ?>
+            <?php
+            /*
             <table id="userUploadedSongs">
                 <thead>
                     <tr>
@@ -121,10 +142,12 @@
                 <tbody>
                     <?php
                         $tempVal=1;  
-                        $x->songDisplayHtml();
+                        //$x->songDisplayHtml();
                     ?>
                 </tbody>
             </table>
+            */
+            ?>
         </div>
         </section>
         <section id="rightTab">

@@ -145,13 +145,32 @@ font-weight: normal;
     border-left: none;
 }
 
-#displaySongs {
+.displaySongs {
     width: 100%;
 }
 
 .songTable {
     width: 100%;
     border-collapse: collapse;
+}
+
+.userTable {
+    width: 100.3%;
+    border-collapse: collapse;
+}
+
+.userTable th {
+    border: 1px solid #60017B;
+    border-left: none;
+    border-right: none;
+    padding: 8px;
+    text-align: left;   
+    color: #CED8E0;
+}
+
+.userTable td {
+    border: 1px solid #60017B;
+    padding: 8px;
 }
 
 .songTable th, .songTable td {
@@ -163,6 +182,25 @@ font-weight: normal;
     color: #CED8E0;
 }
 
+.playlistQueryTable {
+    width: 100.3%;
+    border-collapse: collapse;
+}
+.playlistQueryTable td {
+    border: 1px solid #60017B;
+    border-right: none;
+    border-left: none;
+    padding: 8px;
+    text-decoration: none;
+}
+.playlistQueryTable th {
+    border: 1px solid #60017B;
+    border-left: none;
+    border-right: none;
+    padding: 8px;
+    text-align: left;   
+    color: #CED8E0;
+}
 .s1:hover {
     background-color: #60017B;
 }
@@ -306,8 +344,23 @@ input, textarea {
 }
 
 #displayUserName {
-    width: 100%;
+    width: 50%;
     border-bottom: 1px solid #60017B;
+}
+
+#displayContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100.3%;
+}
+
+#displayChoice {
+    width: 50%;
+    border-bottom: 1px solid #60017B;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 }
 
 #username {
@@ -319,14 +372,15 @@ input, textarea {
     border: 1px solid #60017B;
     border-top: none;
     border-bottom: none;
-    width: 50%;
+    width: 100%;
     border-left: none;
+    border-right: none;
 }
 
 .publicPlaylist {
     border: 1px solid #60017B;
     width: 100%;
-    height: 100%;
+    height: 10vh;
 }
 
 #userUploadedSongs {
@@ -340,4 +394,19 @@ input, textarea {
 #displayTables {
     display: flex;
     flex-direction: row;
+}   
+
+#songsTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 12%;
+    font-size: 40px;
+    margin: 30px;
 }
+
+#currentDisplay {
+    margin-left: 120px;
+}
+
