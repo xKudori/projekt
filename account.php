@@ -81,7 +81,7 @@
                 <a href="./index.php" id="homeContainer">
                     Home
                 </a>
-                <a href="./account.php" id="accountContainer">
+                <a href="./account.php?u=<?=$_SESSION["username"]?>" id="accountContainer">
                     Account
                 </a>
                 <div id="searchContainer">
@@ -100,35 +100,46 @@
             <div id="displayContainer">
                 <div id="displayUserName">
                     <p id="username">
-                        <?=$_SESSION["username"]?>
+                        <?php
+                            if (isset($_GET["u"])) {
+                                echo $_GET["u"];
+                            }
+                        ?>
                     </p>
                     <p id="userInfo">
                     <?php
-                        echo $x->countSong($user);
-                        echo $x->countPlaylists($user);
+                        echo $x->countSong($_GET["u"]);
+                        echo $x->countPlaylists($_GET["u"]);
                     ?>
                     </p>
                 </div>
                 <div id="displayChoice">
-                    <form method="post">
+                    <?php /*form method="post">
                         <button class="btn" name="PublishedSongs">Songs</button>
                         <button class="btn" name="PublicPlaylists">Public Playlists</button>
-                    </form>
+                    </form>*/
+                    $u = $_GET["u"];
+                    echo "<a href=\"account.php?u=$u&songs\">Songs</a>";
+                    echo "<a href=\"account.php?u=$u&playlists\">Public Playlists   </a>";
+                    ?>
                 </div>
             </div>
             <div id="displayTables">
                 <?php
-                    if (isset($_POST["PublicPlaylists"])) {
+                    if (isset($_GET["playlists"])) {
+                        $u = $_GET["u"];
                         echo "<table id=\"userPublicPlaylists\">
                         <thead>
                             <tr>
-                                <th>$user's Public Playlists</th>
+                                <th>$u's Public Playlists</th>
                             </tr>
                         </thead>
                         <tbody>";
                             $x->displayPublicPlaylists();
                         echo "</tbody>
                     </table>";
+                    } else if (isset($_GET["songs"])) {
+                        $x->songDisplayHtml();
                     }
             ?>
             <?php

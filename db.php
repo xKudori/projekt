@@ -69,15 +69,15 @@
         $stmt->execute();
     }
     private function getSongIdFromPlaylistSongs() {
-        if (isset($_GET["x"]) && !isset($_GET["t"])) 
+        if (isset($_GET["x"]) && !isset($_GET["u"])) 
         {
             $pId = $_GET["x"]; 
             $sql = $this->pdo->prepare("SELECT song_id FROM playlist_songs WHERE playlist_id=$pId");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
             return $sql->fetchAll();
-        } else if (isset($_GET["x"]) && isset($_GET["t"])){
-            $pId = $this->getPlaylistIdByName($_GET["x"]); 
+        } else if (!isset($_GET["x"]) && isset($_GET["u"])){
+            $pId = $this->getPlaylistIdByName($_GET["u"]); 
             $sql = $this->pdo->prepare("SELECT song_id FROM playlist_songs WHERE playlist_id = $pId");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
@@ -85,7 +85,7 @@
         } 
     } 
     private function song() {
-        if (isset($_GET["x"])) {
+        if (isset($_GET["x"]) || isset($_GET["u"])) {
             $sIds = $this->getSongIdFromPlaylistSongs();
     
             $songs = array();
@@ -176,7 +176,7 @@
         foreach ($users as $u) {
             $username = $u["username"];
             echo "<tr>";
-            echo "<td class=\"userTd\"><a href=\"./account.php?x=$username&t=true\">$username</a></td>";
+            echo "<td class=\"userTd\"><a href=\"./account.php?u=$username\">$username</a></td>";
             echo "</tr>";
 
         }
@@ -190,9 +190,8 @@
         $searchedSongs = $this->getSearchQuerySongs();
         $a = 0;
         $user = $_SESSION["username"];
-        if (isset($_GET["x"])) { 
+        if (isset($_GET["x"]) && !isset($_GET["u"])) { 
             $x = $_GET["x"];
-            if (/*$x != $user ||*/ !isset($_GET["t"])) {
                 $pType = $this->pTypeFromId($x);
                 foreach ($pType as $pT) {
                     $pT->playlistType;
@@ -203,10 +202,11 @@
                 } else {
                     $tempVal = "Public/Private";
                 }    
-            } else {
-                $pType = "User";
-                $tempVal = "User";
-            }
+            
+        } else if (isset($_GET["u"]) && !isset($_GET["x"])) {
+            $x = $_GET["u"];
+            $pType = "User";
+            $tempVal = "User";
         }
 
         echo "<div class=\"songsContainer\">";
@@ -225,7 +225,9 @@
         foreach ($songs as $song) {
             global $a;
             $a = $a + 1;
+            if (!isset($_GET["u"])) {
                 $pId = $_GET["x"];
+            }
                 $songId = $song->song_id;
                 $songName = $song->song_name;
                 $songPath = $song->audio_path;
@@ -295,7 +297,7 @@
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
                 echo "</tr>";
             echo "</form>";
-            } else if ($tempVal == "User" && $_GET["x"] == $_SESSION["username"]) {
+            } else if ($tempVal == "User" && $_GET["u"] == $_SESSION["username"]) {
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<button name=\"deleteSong\" class=\"localTitle\" value=\"$songId\">Delete Song</button>" . "</td>"; 
@@ -303,9 +305,10 @@
                 echo "<tr class=\"s1\">";
                 echo "<input type=\"text\" name=\"changeSongName\" class=\"localTitle\" placeholder=\"Change Name\"></input>" . "</td>";
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
+                echo "<input type=\"hidden\" name=\"PublishedSongs\" value=\"$songId\"></input>";
                 echo "</tr>";
             echo "</form>";
-            } else if ($tempVal == "User" && $_GET["x"] != $_SESSION["username"]) {
+            } else if ($tempVal == "User" && $_GET["u"] != $_SESSION["username"]) {
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
@@ -372,8 +375,11 @@
             $songId = $_POST["insertSongId"];
             $playlistId = $this->getPlaylistIdByName($_POST["insertIntoPlaylist"]);
             $this->addSongToPlaylist($songId,$playlistId);
-            if (isset($_GET["t"])) {
-                echo "<script>window.location.href = './account.php?x=$x&t=true'</script>"; //header nie dziala :(
+            if (isset($_GET["u"])) {
+                if (isset($_GET["songs"]))
+                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+            } else if (isset($_GET["playlists"])) {
+                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
             } else {
                 echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
             }
@@ -382,8 +388,11 @@
             $newSongId = $_POST["deleteSong"];
             $this->deleteSongFromPlaylistSongs($newSongId);
             $this->deleteSong($newSongId);
-            if (isset($_GET["t"])) {
-                echo "<script>window.location.href = './account.php?x=$x&t=true'</script>"; 
+            if (isset($_GET["u"])) {
+                if (isset($_GET["songs"]))
+                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+            } else if (isset($_GET["playlists"])) {
+                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
             } else {
                 echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
             }
@@ -391,8 +400,11 @@
             $newSongId = $_POST["removeSong"];
             $removepId = $_POST["removepId"];
             $this->deleteSongFromOnePlaylistSongs($newSongId,$removepId);
-            if (isset($_GET["t"])) {
-                echo "<script>window.location.href = './account.php?x=$x&t=true'</script>";
+            if (isset($_GET["u"])) {
+                if (isset($_GET["songs"]))
+                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+            } else if (isset($_GET["playlists"])) {
+                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
             } else {
                 echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
             }
@@ -401,8 +413,11 @@
             $newSongName = $_POST["changeSongName"];
             $newSongId = $_POST["changeSongId"];
             $this->changeSongName($newSongName, $newSongId);
-            if (isset($_GET["t"])) {
-                echo "<script>window.location.href = './account.php?x=$x&t=true'</script>"; 
+            if (isset($_GET["u"])) {
+                if (isset($_GET["songs"]))
+                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+            } else if (isset($_GET["playlists"])) {
+                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
             } else {
                 echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
             }
@@ -452,14 +467,14 @@
 
     private function playlist_name() 
     {
-        if (isset($_GET["x"]) && !isset($_GET["t"])) 
+        if (isset($_GET["x"]) && !isset($_GET["u"])) 
         {
             $pId = $_GET["x"];
             $sql = $this->pdo->prepare("SELECT playlist_name FROM playlists WHERE playlist_id=$pId");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
             return $sql->fetchAll();
-        } else if (!isset($_GET["x"]) && !isset($_GET["t"])) {
+        } else if (!isset($_GET["x"]) && !isset($_GET["u"])) {
 
             $sql = $this->pdo->prepare("SELECT playlist_name FROM playlists WHERE playlist_id=1");
             $sql->execute();
@@ -470,13 +485,13 @@
 
     public function playlistNameDisplayHtml() 
     {
-        if (!isset($_GET["t"])) {
+        if (!isset($_GET["u"])) {
             $pname = $this->playlist_name();
             foreach ($pname as $playlistName) {    
                 echo "<div class=\"pName\">" . $playlistName->playlist_name . "</div>";     
             }
         } else {
-            echo "<div class=\"pName\">" . $_GET["x"] . "</div>";     
+            echo "<div class=\"pName\">" . $_GET["u"] . "</div>";     
         }
     }
 
@@ -489,7 +504,7 @@
     }
 
     private function userPublicPlaylists() {
-        $user = $_SESSION["username"];
+        $user = $_GET["u"];
         $sql = $this->pdo->prepare("SELECT * FROM playlists WHERE user = (:user) AND playlistType = \"Public\"");
         $sql->bindParam(":user", $user, PDO::PARAM_STR);
         $sql->execute();
@@ -509,8 +524,8 @@
     private function getUserSongs($songId) {
         
         $user = $_SESSION["username"];
-        if (isset($_GET["t"])) {
-            $pname = $_GET["x"];
+        if (isset($_GET["u"])) {
+            $pname = $_GET["u"];
         } else {
             $pname = $this->playlist_name();
             foreach ($pname as $a) {
@@ -759,8 +774,8 @@
 
     private function getPublicOrPrivatePlaylist($songId) {
         $user = $_SESSION["username"];
-        if (isset($_GET["t"])) {
-            $pname = $_GET["x"];
+        if (isset($_GET["u"])) {
+            $pname = $_GET["u"];
         } else {
             $pname = $this->playlist_name();
             foreach ($pname as $a) {
@@ -787,8 +802,8 @@
     private function getNewLocalPlaylists($songId) 
     {
         $user = $_SESSION["username"];
-        if (isset($_GET["t"])) {
-            $pname = $_GET["x"];
+        if (isset($_GET["u"])) {
+            $pname = $_GET["u"];
         } else {
             $pname = $this->playlist_name();
             foreach ($pname as $a) {
