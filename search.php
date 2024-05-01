@@ -81,7 +81,7 @@
                 <a href="./index.php" id="homeContainer">
                     Home
                 </a>
-                <a href="./account.php" id="accountContainer">
+                <a href="./account.php?u=<?=$_SESSION["username"]?>" id="accountContainer">
                     Account
                 </a>
                 <div id="searchContainer">
