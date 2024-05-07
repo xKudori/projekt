@@ -99,13 +99,14 @@
             </div> 
             <div id="displayContainer">
                 <div id="displayUserName">
-                    <p id="username">
+                    <p id="accusername">
                         <?php
                             if (isset($_GET["u"])) {
                                 echo $_GET["u"];
                             }
                         ?>
                     </p>
+                    <a href="logout.php">(Logout)</a>
                     <p id="userInfo">
                     <?php
                         echo $x->countSong($_GET["u"]);
@@ -119,8 +120,9 @@
                         <button class="btn" name="PublicPlaylists">Public Playlists</button>
                     </form>*/
                     $u = $_GET["u"];
-                    echo "<a href=\"account.php?u=$u&songs\">Songs</a>";
-                    echo "<a href=\"account.php?u=$u&playlists\">Public Playlists   </a>";
+                    $u = $_GET["u"];
+                    echo "<a class=\"button\" href=\"account.php?u=$u&songs\">Songs</a>";
+                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\">Public Playlists</a>";
                     ?>
                 </div>
             </div>
@@ -178,7 +180,6 @@
                 </div>
             </div>
         </section>
-        <a href="logout.php">Logout</a>
         <section id="bottomTab">
             <button id="previous">&#9666;</button>
             <button id="playBtn">&#9658;</button>
