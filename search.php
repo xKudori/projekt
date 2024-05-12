@@ -77,27 +77,9 @@
             </div>
         </section>         
         <section id="middleTab">
-            <div id="top">
-                <a href="./index.php" id="homeContainer">
-                    Home
-                </a>
-                <a href="./account.php?u=<?=$_SESSION["username"]?>" id="accountContainer">
-                    Account
-                </a>
-                <div id="searchContainer">
-                    <form method="post">
-                        <label for="searchQuery">Search</label>
-                        <input type="text" name="searchQuery">
-                    </form>
-                    <?php
-                        if (isset($_POST["searchQuery"])) {
-                            $s = $_POST["searchQuery"];
-                            echo "<script>window.location.href = './search.php?query=$s';</script>"; 
-                        }
-                    ?>
-                </div>
-            </div> 
-            
+            <?php
+                require_once("navbar.php");
+            ?>
             <div id="songsTitle">   
             <form method="post">
                 <button name="songSearchDisplay" class="btn" id="songSearchDisplay" value="Songs">Songs</button>
@@ -105,190 +87,53 @@
                 <button name="userSearchDisplay" class="btn" id="userSearchDisplay" value="Users">Users</button> 
             </form>
             <?php
+                $q = $_GET["query"];
                 if (isset($_POST["songSearchDisplay"])) {
-                    echo "<div id=\"currentDisplay\">Songs</div>";
+                    //echo "<div id=\"currentDisplay\">Songs</div>";
+                    echo "<script>window.location.href = './search.php?query=$q&songs';</script>"; 
                 }
                 else if (isset($_POST["playlistSearchDisplay"])) {
-                    echo "<div id=\"currentDisplay\">Playlists</div>";
+                    echo "<script>window.location.href = './search.php?query=$q&playlists';</script>";
+                    //echo "<div id=\"currentDisplay\">Playlists</div>";
                 } 
                 else if (isset($_POST["userSearchDisplay"])) {
-                    echo "<div id=\"currentDisplay\">Users</div>";   
+                    echo "<script>window.location.href = './search.php?query=$q&users';</script>";
+                    //echo "<div id=\"currentDisplay\">Users</div>";   
                 }
                 else {
+                    //echo "<div id=\"currentDisplay\"></div>";   
+                }
+
+                if (isset($_GET["songs"])) {
+                    echo "<div id=\"currentDisplay\">Songs</div>";
+                } else if (isset($_GET["playlists"])) {
+                    echo "<div id=\"currentDisplay\">Playlists</div>";
+                } else if (isset($_GET["users"])) {
+                    echo "<div id=\"currentDisplay\">Users</div>";
+                } else {
                     echo "<div id=\"currentDisplay\"></div>";   
                 }
                 
                 ?>
             </div>
             <?php
-            if (isset($_POST["songSearchDisplay"])) {
+            if (isset($_GET["songs"])) {
                 $x->songDisplayHtml();
-            }
-            if (isset($_POST["playlistSearchDisplay"])) {
+            } 
+            if (isset($_GET["playlists"])) {
                 $x->playlistQueryDisplay();
             } 
-            if (isset($_POST["userSearchDisplay"])) {
+            if (isset($_GET["users"])) {
                 $x->userDisplayHtml();
             }
             ?>
         </section>
-        <section id="rightTab">
-            <div id="playlistSelectionTitle">Playlist Selection</div>
-                <div class="userPlaylists">
-                    Your playlists
-                    <form method="post">
-                        <button id="sortButton" name="sort">(Sort)</button>
-                    </form>
-                </div>
-            <div id="playlistSelection">
-                <?php
-                    $x->displayPlaylistsHtml();
-                ?>
-                <div class="userPlaylists">
-                    Liked playlists
-                </div>
-            </div>
-        </section>
-        <a href="logout.php">Logout</a>
-        <section id="bottomTab">
-            <button id="previous">&#9666;</button>
-            <button id="playBtn">&#9658;</button>
-            <button id="pauseBtn">&#10074;&#10074;</button>
-            <button id="next">&#9656;</button>
-            <h2 id="timer">00:00</h2>
-            <input type="range" min="0" max="100" step="1" id="seekSlider" value="0">
-            <h2>  &#128266;  </h2>
-            <input type="range" min="0" max="1" step="0.01" id="vol" value="0.2">
-        </section>
-    <script>
-        let playBtns = document.querySelectorAll(".play");
-        let pauseBtn = document.getElementById("pauseBtn");
-        let seekSlider = document.getElementById("seekSlider");
-        let vol = document.getElementById("vol");
-        let audio = new Audio();
-        let currentIndex = -1;
-        let previous = document.getElementById("previous");
-        let next = document.getElementById("next");
-
-        /*
-        const songs = document.getElementById("songSearchDisplay");
-        const playlists = document.getElementById("playlistSearchDisplay");
-        const users = document.getElementById("userSearchDisplay");
-
-        songs.addEventListener("click", function() {
-            document.getElementById("currentDisplay").innerHTML = songs.value;
-        });
-
-        playlists.addEventListener("click", function() {
-            document.getElementById("currentDisplay").innerHTML = playlists.value;
-        });
-
-        users.addEventListener("click", function() {
-            document.getElementById("currentDisplay").innerHTML = users.value;
-        });
-*/
-        function playSong(index) {
-            let filePath = playBtns[index].value;
-            audio.src = filePath;
-            audio.play();
-            currentIndex = index;
-            startTimerOnPlay();
-        }
-
-        function playNextSong() {
-            currentIndex++;
-            if (currentIndex < playBtns.length) {
-                playSong(currentIndex);
-            } else {
-                audio.pause();
-            }
-        }
-
-        function playPreviousSong() {
-            currentIndex--;
-            playSong(currentIndex);
-        }
-
-        audio.addEventListener("ended", function() {
-            playNextSong();
-        });
-
-
-        function getCurrentIndex() {
-            for (let i = 0; i < playBtns.length; i++) {
-                if (audio.src === playBtns[i].value) {
-                    return i;
-                }
-            }
-            return -1; 
-        }
-
-        function pauseAudio() {
-            audio.pause();
-        }
-        function audioVolume() {
-            audio.volume = parseFloat(vol.value);
-        }
-        function updateSeekSlider(){
-            let newPosition = (audio.currentTime / audio.duration) * 100;
-            seekSlider.value = newPosition;
-        }
-        function seekAudio() {
-            let newPosition = audio.duration * (seekSlider.value / 100);
-            audio.currentTime = newPosition;
-        }
-
-        function startTimer(duration) {
-            var timer = 0, minutes, seconds;
-            var interval = setInterval(function () {
-            minutes = Math.floor(timer / 60);
-            seconds = timer % 60;
-
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-
-            document.getElementById('timer').textContent = minutes + ':' + seconds;
-
-            timer++;
-
-            if (timer > duration) {
-                clearInterval(interval);
-            }
-        }, 1000);
-        }
-
-        function startTimerOnPlay() {
-            var duration = audio.duration;
-            startTimer(duration);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        audio.addEventListener('play', startTimerOnPlay);
-
-        pauseBtn.addEventListener('click', stopTimer);
-
-        seekSlider.addEventListener("input", seekAudio)
-        playBtns.forEach(function(playBtn, index) {
-            playBtn.addEventListener("click", function() {
-                playSong(index);
-            });
-        });
-        
-        pauseBtn.addEventListener("click",pauseAudio);
-        vol.addEventListener("input", audioVolume);
-        audio.addEventListener("timeupdate", updateSeekSlider);
-        next.addEventListener("click", function() {
-            playNextSong();
-        });
-        previous.addEventListener("click",function() {
-            audio.currentTime = 0;
-        })
-        previous.addEventListener("dblclick",function() {
-            playPreviousSong();
-        })
+        <?php
+            require_once("rightTab.php");
+            require_once("bottomTab.html");
+        ?>
+    <script src="./audioPlayer.js">
+    
     </script>
 </body>
 </html>
