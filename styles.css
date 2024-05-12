@@ -11,12 +11,29 @@ body {
     color: #CED8E0;
 }
 
-.logtext{
-    justify-content: center;
-    padding: 25px;
-    font-size: 50px;
+body .logtext{
+    margin: 0 auto;
+    position: fixed;
+    left: 20%;
+    font-size: 10vh;
     color:#01447b;
+    overflow: hidden;
+    white-space: nowrap;
+    animation:
+        text-appear 0.7s steps(40,end),
+        blink-caret .15s step-end infinite;
+    animation-timing-function: ease;
+    transform: translate(calc(-5% + 20px * var(--x)), calc(-5% + 20px * var(--y)));
+    transition-delay: 1ms;
 }
+
+
+@keyframes text-appear {
+    from {width: 0;}
+    to {width: 30%;}
+}
+
+
 
 .loginf{
     position:fixed;
@@ -51,11 +68,22 @@ body {
 }
 
 .fl{
-font-size: 35px;
-color:aqua;
-font-weight: normal;
-
+    font-size: 3vh;
+    color:aqua;
+    font-weight: normal;
+    border: 5px solid #60017B;
+    padding: 5vh;
+    border-radius: 4%;
+    position: fixed;
+    right: 20%;
+    transition: border 0.3s; 
+    border: 0 solid transparent;
 }
+
+.fl:hover {
+    border: 5px solid #60017B; 
+}
+
 #fInput, #createPlaylist {
     height: 39.8%;
     display: flex;
@@ -64,7 +92,7 @@ font-weight: normal;
     border-bottom: none;
     align-items: center;
     justify-content: center;
-    padding-left: 10%;
+
 }
 
 #rightTab {
@@ -75,9 +103,8 @@ font-weight: normal;
 }
 
 #playlistSelection {
-    height: 81.6%;
+    height: 82.6%;
     border-bottom: none;
-    
 }
 
 #middleTab {
@@ -101,18 +128,20 @@ font-weight: normal;
 
 #homeContainer, #accountContainer, #searchContainer {
     height: 100%;
-    
     width: 33.3333333333333%;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     color: #CED8E0;
-    
+    transition: background-color 0.3s, font-weight 0.3s;
 }
 
 #homeContainer:hover, #searchContainer:hover, #accountContainer:hover {
     background-color: #60017B;
+    font-weight: bold;
+    -webkit-text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5); 
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5);
 }
 
 #homeContainer {
@@ -146,7 +175,10 @@ font-weight: normal;
 }
 
 .displaySongs {
-    width: 100%;
+    width: 100.3%;
+    height: 75%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .songTable {
@@ -201,6 +233,10 @@ font-weight: normal;
     text-align: left;   
     color: #CED8E0;
 }
+
+.s1 {
+    transition: background-color, 0.19s;
+}
 .s1:hover {
     background-color: #60017B;
 }
@@ -240,7 +276,6 @@ input[type="range"] {
     border-radius: 50%;
 }
 
-
 #seekSlider::-moz-range-thumb {
     width: 20px;
     height: 20px;
@@ -265,9 +300,14 @@ input[type="range"] {
     color: #CED8E0;
     padding: 8px;
     text-align: left;
-    border: 1px solid #60017B;
-    border-top: none;
+    border-bottom: 1px solid #60017B;
     
+}
+
+.options {
+    padding: 500px;
+    margin: 500px;
+    text-align: right;
 }
 
 .click {
@@ -283,9 +323,19 @@ input[type="range"] {
 .Help {
     display: inline-block;
     font-size: 12px;
+    position: relative;
 }
 
-.Help .helpText {
+.questionMark {
+    display: inline-block;
+    font-size: 12px;
+    position: relative;
+}
+
+.helpText {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.4s;
     visibility: hidden;
     text-align: center;
     position: absolute;
@@ -294,12 +344,26 @@ input[type="range"] {
 }
 
 .Help:hover .helpText {
+    width: 19vh;
     visibility: visible;
 }
 
 .userPlaylists {
-  border: 1px solid #60017B;  
-  height: 8%;
+    border: 1px solid #60017B;  
+    height: 6vh;
+    border-top: none;
+    color: #CED8E0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#liked {
+    border: 1px solid #60017B;  
+    height: 4vh;
+    width: auto;
+    border-left: none;
+    border-right: none;
     border-top: none;
     color: #CED8E0;
     display: flex;
@@ -322,12 +386,31 @@ input[type="range"] {
     color: #CED8E0;
 }
 button{ 
-  color:#000000; 
-  font: bold 84% 'trebuchet ms',helvetica,sans-serif; 
-  background-color:#7908bf; 
-  border: #7908bf;
-  border-radius: 15px;
+    color:#000000; 
+    font: bold 84% 'trebuchet ms',helvetica,sans-serif; 
+    background-color:#a008bf;
+    border: #7908bf;
+    border-radius: 7px;
 } 
+
+.send {
+    display: block;
+    width: 35vh;
+    height: 7vh;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 50px;
+    background-color:#a008bf;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    color:white;
+    transition: background-color 0.5s;
+}
+
+.send:hover {
+    background-color: #1d1864;
+}
 
 .button{ 
     display: block;
@@ -341,6 +424,7 @@ button{
     border: none;
     border-radius: 5px;
     color:white;
+    transition: background-color 0.5s;
 }
 
 .button:hover {
@@ -432,3 +516,16 @@ input, textarea {
     margin-left: 120px;
 }
 
+.playlistsContainer {
+    height: 100.1%;
+    border: 1px solid #60017B;
+    border-bottom: none;
+    border-top: none;
+}
+
+.del {
+    background-color: black;
+    color: white;
+    font-size: 50px;
+    float: right;
+}
