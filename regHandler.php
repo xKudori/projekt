@@ -11,7 +11,8 @@
             switch($userExists) {
                 case false:
                     $success = $x->registerUser($username, $password, $email);
-                    $x->createUserPlaylist($username);
+                    $x->createUserPlaylist($username,"User");
+                    $x->createUserPlaylist($username,"Liked");
                         header("Location: login.php");
                 break;
             case true:

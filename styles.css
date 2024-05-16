@@ -3,7 +3,7 @@
 body {
     width: 99%;
     height: 95vh;
-    background-color: #000;
+    background-image: url("./stars-g64cef3ecf_1920.jpg");
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,7 +16,7 @@ body .logtext{
     position: fixed;
     left: 20%;
     font-size: 10vh;
-    color:#01447b;
+    color:white;
     overflow: hidden;
     white-space: nowrap;
     animation:
@@ -40,10 +40,33 @@ body .logtext{
     top: 50px;
     left: 50px;
     font-size: 30px;
+    text-decoration: none;
+    color: white;
+}
+
+.logo {
+    display: flex;
+    flex-direction: row;
+    position:fixed;
+    top: -5px;
+    right: 120px;
+    font-size: 30px;
+    width: 200px;
+}
+
+.luna {
+    position:fixed;
+    top: 20px;
+    right: 50px;
 }
 #main {
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 90%;
+    background: rgba( 0, 0, 0, 0.25 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 5px );
+    -webkit-backdrop-filter: blur( 5px );
+    border-radius: 10px;
 }
 
 #leftTab {
@@ -69,7 +92,7 @@ body .logtext{
 
 .fl{
     font-size: 3vh;
-    color:aqua;
+    color:white;
     font-weight: normal;
     border: 5px solid #60017B;
     padding: 5vh;
@@ -78,10 +101,15 @@ body .logtext{
     right: 20%;
     transition: border 0.3s; 
     border: 0 solid transparent;
+    background: rgba( 0, 0, 0, 0.25 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 5px );
+    -webkit-backdrop-filter: blur( 5px );
+    border-radius: 10px;
 }
 
 .fl:hover {
-    border: 5px solid #60017B; 
+    border: 2px solid #60017B; 
 }
 
 #fInput, #createPlaylist {
@@ -103,8 +131,9 @@ body .logtext{
 }
 
 #playlistSelection {
-    height: 82.6%;
+    height: 82%;
     border-bottom: none;
+    overflow-y: auto;
 }
 
 #middleTab {
@@ -243,7 +272,7 @@ body .logtext{
 
 #bottomTab {
   clear: both;
-  height: 5%;
+  height: 10%;
   border: 1px solid #60017B;
   display: flex;
   justify-content: center;
@@ -284,8 +313,10 @@ input[type="range"] {
 }
 
 .pName {
+    margin-top: 5vh;
+    text-align: center;
     font-size: 40px;
-    height: 40px;
+    height: 10vh;
 }
 
 .playlistTable {
@@ -344,6 +375,11 @@ input[type="range"] {
 }
 
 .Help:hover .helpText {
+    width: 19vh;
+    visibility: visible;
+}
+
+.questionMark:hover .helpText {
     width: 19vh;
     visibility: visible;
 }
@@ -502,6 +538,8 @@ input, textarea {
     flex-direction: row;
 }   
 
+
+
 #songsTitle {
     display: flex;
     flex-direction: row;
@@ -528,4 +566,14 @@ input, textarea {
     color: white;
     font-size: 50px;
     float: right;
+}
+
+.loginFormInput {
+    height: 4vh;
+    width: 34vh;
+    border-radius: 3px;
+}
+
+.loginFormInput:hover {
+    border-color:#60017B;
 }

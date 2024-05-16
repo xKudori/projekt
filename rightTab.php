@@ -12,6 +12,5 @@
         <?php
             $x->displayPlaylistsHtml();
         ?>
-                
     </div>
-</section>
+</section> 
