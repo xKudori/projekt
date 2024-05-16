@@ -41,7 +41,7 @@
                         <label for="Local">Local</label>
                         <div class="questionMark">(?)
                             <span class="helpText">
-                                A local playlist is where you can store your <br>
+                                A local playlist is where you can store your 
                                  own imported audio files from your device. <br>
                                 It will not be accessible to anyone and cannot be shared.
                             </span>

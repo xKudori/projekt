@@ -1,8 +1,13 @@
 <div id="top">
-    <a href="./index.php" id="homeContainer">
+    <?php
+        $userLikedId = $x->getUserLikedSongs();
+    echo "
+    <a href=\"./index.php?x=$userLikedId\" id=\"homeContainer\" hx-trigger=\"click\" hx-get=\"./test.php?x=$userLikedId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\">
         Home
     </a>
-    <a href="./account.php?u=<?=$_SESSION["username"]?>" id="accountContainer">
+    ";
+    ?>
+    <a href="./account.php?u=<?=$_SESSION["username"]?>" hx-trigger="click" hx-get="./test.php?u=<?=$_SESSION["username"]?>" hx-target="#middleTab" hx-swap="innerHTML" id="accountContainer">
         Account
     </a>
     <div id="searchContainer">

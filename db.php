@@ -58,16 +58,29 @@
         $stmt->execute();
     }
 
-    public function createUserPlaylist($username) {
-        $type = "User";
-        $sql = "INSERT INTO playlists (playlist_name, playlistType, user) VALUES (:username, :user, :user2)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->bindParam(":username", $username, PDO::PARAM_STR);
-        $stmt->bindParam(":user", $type, PDO::PARAM_STR);
-        $stmt->bindParam(":user2", $username, PDO::PARAM_STR);
+    public function createUserPlaylist($username, $name) {
+        if ($name == "User") {
+            $type = "User";
+            $sql = "INSERT INTO playlists (playlist_name, playlistType, user) VALUES (:username, :user, :user2)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":username", $username, PDO::PARAM_STR);
+            $stmt->bindParam(":user", $type, PDO::PARAM_STR);
+            $stmt->bindParam(":user2", $username, PDO::PARAM_STR);
 
-        $stmt->execute();
+            $stmt->execute();
+        } else if ($name == "Liked") {
+            $type = "Liked";
+            $u = $username . $type;
+            $sql = "INSERT INTO playlists (playlist_name, playlistType, user) VALUES (:username, :user, :user2)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(":username", $u, PDO::PARAM_STR);
+            $stmt->bindParam(":user", $type, PDO::PARAM_STR);
+            $stmt->bindParam(":user2", $username, PDO::PARAM_STR);
+
+            $stmt->execute();
+        }
     }
+
     private function getSongIdFromPlaylistSongs() {
         if (isset($_GET["x"]) && !isset($_GET["u"])) 
         {
@@ -195,6 +208,15 @@
         return $result['count'] > 0; 
     }
 
+    public function countPlaylistLikes($playlistId) {
+        $userId = $this->getUserIdByName(); 
+        $sql = $this->pdo->prepare("SELECT COUNT(*) AS count FROM playlist_likes WHERE playlist_id = :playlistId");
+        $sql->bindParam(":playlistId", $playlistId, PDO::PARAM_INT);
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        return $result['count']; 
+    }
+
     private function pTypeFromId($pId) {
             $sql = $this->pdo->prepare("SELECT playlistType FROM playlists WHERE playlist_id = $pId");
             $sql->execute();
@@ -251,7 +273,7 @@
         $songs = $this->song();
         $searchedSongs = $this->getSearchQuerySongs();
         $a = 0;
-        $user = $_SESSION["username"];
+        //$user = $_SESSION["username"];
         if (isset($_GET["x"]) && !isset($_GET["u"])) { 
             $x = $_GET["x"];
             $pType = $this->pTypeFromId($x);
@@ -298,7 +320,7 @@
             echo "<td>" . $song->song_name . "</td>";
             echo "<td>" . $song->artist . "</td>";
             echo "<td>" . $song->length . "</td>";
-            echo "<td>" . "<div class=\"Help\">" . "..." . "<span class=\"helpText\">"; 
+            echo "<td>" . "<div class=\"Help\">Option<span class=\"helpText\">"; 
             $localPlaylist = $this->getNewLocalPlaylists($songId);
             $publicOrPrivatePlaylist = $this->getPublicOrPrivatePlaylist($songId);
             $userPlaylist = $this->getUserSongs($songId);
@@ -376,7 +398,14 @@
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
                 echo "</tr>";
             echo "</form>";
-            } else  {
+            } else if ($tempVal == "Public/Private" && $this->isUserPlaylist($_GET["x"]) == false) {
+                echo "<form method=\"post\">";
+                echo "<tr class=\"s1\">";
+                echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
+                echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
+                echo "</tr>";
+            }
+            else {
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
@@ -439,15 +468,22 @@
     
             $this->addSongToPlaylist($songId,$playlistId);
             if (isset($_GET["u"])) {
-                if (isset($_GET["songs"]))
-                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+                if (isset($_GET["songs"])) {
+                    if (isset($x)) {
+                        echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                    }
+                }
             } else if (isset($_GET["playlists"])) {
-                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
+                if (isset($x)) {
+                    echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                }
             } else if(isset($_GET["query"])) {
                 $q = $_GET["query"];
                 echo "<script>window.location.href = './search.php?query=$q&songs';</script>"; 
-            }   else {
-                echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
+            } else {
+                if (isset($pId)) {
+                    echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                }
             }
 
         } if (isset($_POST["deleteSong"]) && empty($_POST["changeSongName"])) {
@@ -455,24 +491,38 @@
             $this->deleteSongFromPlaylistSongs($newSongId);
             $this->deleteSong($newSongId);
             if (isset($_GET["u"])) {
-                if (isset($_GET["songs"]))
-                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+                if (isset($_GET["songs"])) {
+                    if (isset($x)) {
+                        echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                    }
+                }
             } else if (isset($_GET["playlists"])) {
-                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
+                if (isset($x)) {
+                    echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                }
             } else {
-                echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
+                if (isset($pId)) {
+                    echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                }
             }
         } else if (isset($_POST["removeSong"]) && empty($_POST["changeSongName"])) {
             $newSongId = $_POST["removeSong"];
             $removepId = $_POST["removepId"];
             $this->deleteSongFromOnePlaylistSongs($newSongId,$removepId);
             if (isset($_GET["u"])) {
-                if (isset($_GET["songs"]))
-                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+                if (isset($_GET["songs"])) {
+                    if (isset($x)) {
+                        echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                    }
+                }
             } else if (isset($_GET["playlists"])) {
-                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
+                if (isset($x)) {
+                    echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                }
             } else {
-                echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
+                if (isset($pId)) {
+                    echo "<script>window.location.href = './index.php' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                }
             }
         }
         if (isset($_POST["changeSongName"]) && !empty($_POST["changeSongName"])) {
@@ -481,11 +531,17 @@
             $this->changeSongName($newSongName, $newSongId);
             if (isset($_GET["u"])) {
                 if (isset($_GET["songs"]))
-                echo "<script>window.location.href = './account.php?u=$x&songs'</script>"; //header nie dziala :(
+                if (isset($x)) {
+                    echo "<script>window.location.href = './account.php?u=$x&songs'</script> hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";"; //header nie dziala :(
+                }
             } else if (isset($_GET["playlists"])) {
-                echo "<script>window.location.href = './account.php?u=$x&playlists';</script>"; 
+                if (isset($x)) {
+                    echo "<script>window.location.href = './account.php?u=$x&playlists'</script> hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";"; //header nie dziala :(
+                }
             } else {
-                echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
+                if (isset($pId)) {
+                    echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                }
             }
         }
         }
@@ -532,31 +588,51 @@
 
     private function playlist_name() 
     {
-        if (isset($_GET["x"]) && !isset($_GET["u"])) 
+        if ((isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_SESSION["playlist"])) || (isset($_GET["x"]) && !isset($_GET["u"]) && isset($_SESSION["playlist"]))) 
         {
             $pId = $_GET["x"];
             $sql = $this->pdo->prepare("SELECT playlist_name FROM playlists WHERE playlist_id=$pId");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
             return $sql->fetchAll();
-        } else if (!isset($_GET["x"]) && !isset($_GET["u"])) {
-
+        } else if (!isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_SESSION["playlist"])) {
             $sql = $this->pdo->prepare("SELECT playlist_name FROM playlists WHERE playlist_id=0");
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
             return $sql->fetchAll();
-        }
+        } else if (!isset($_GET["x"]) && !isset($_GET["u"]) && isset($_SESSION["playlist"])) {
+            $pId = $_SESSION["playlist"];
+            $sql = $this->pdo->prepare("SELECT playlist_name FROM playlists WHERE playlist_id=$pId");
+            $sql->execute();
+            $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
+            return $sql->fetchAll();
+        } 
     }
 
     public function playlistNameDisplayHtml() 
     {
-        if (!isset($_GET["u"])) {
+        if ((!isset($_GET["u"]) && isset($_GET["x"])) || (isset($_SESSION["playlist"]))) {
             $pname = $this->playlist_name();
             foreach ($pname as $playlistName) {    
-                echo "<div class=\"pName\">" . $playlistName->playlist_name . "</div>";     
+                $playlistName->playlist_name;    
             }
-        } else {
+            $name = $playlistName->playlist_name;
+            $pVar = $this->getPlaylistType($name);
+            foreach ($pVar as $p) {
+                $p["playlistType"];
+            }
+            $pType = $p["playlistType"];
+            if ($pType == "Liked") {
+                echo "<div class=\"pName\">Liked Songs</div>";  
+            } else {
+            foreach ($pname as $playlistName) {    
+                echo "<div class=\"pName\">" . $name . "</div>";     
+            }
+        }
+        } else if (isset($_GET["u"]) && !isset($_GET["x"])){
             echo "<div class=\"pName\">" . $_GET["u"] . "</div>";     
+        } else if (!isset($_GET["u"]) || !isset($_GET["x"])) {
+
         }
     }
 
@@ -579,7 +655,7 @@
 
     private function userPlaylist() {
         $user = $_SESSION["username"];
-        $sql = $this->pdo->prepare("SELECT * FROM playlists WHERE user = (:user) AND playlistType NOT LIKE \"User\"");
+        $sql = $this->pdo->prepare("SELECT * FROM playlists WHERE user = (:user) AND playlistType NOT LIKE \"User\" AND playlistType NOT LIKE \"Liked\"");
         $sql->bindParam(":user", $user, PDO::PARAM_STR);
         $sql->execute();
         $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
@@ -622,11 +698,21 @@
         return $sql->fetchAll();
     }
 
+    public function getUserLikedSongs() {
+        $user = $_SESSION["username"];
+        $sql = $this->pdo->prepare("SELECT playlist_id FROM playlists WHERE user LIKE \"$user\" AND playlistType LIKE \"Liked\"");
+        $sql->execute();
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        return $result["playlist_id"];
+    }
+
     public function displayPlaylistsHtml() 
     {
         $playlist = $this->userPlaylist();
         $sortedPlaylist = $this->sortedPlaylists();
         $likedPlaylists = $this->getUserLikedPlaylists();
+        $likedSongsId = $this->getUserLikedSongs();
+        $s = $_SESSION["username"];
         /*print_r($likedPlaylists);
         print_r($playlist);*/
         echo "<div class=\"playlistsContainer\">";
@@ -638,13 +724,17 @@
         if (isset($_POST["sort"])) {
         foreach ($sortedPlaylist as $p) {
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . "</a>" . "</td>";
+            //echo "<button data-action=\"update\"";
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . "</a>" . "</td>";
+            //echo "</button>";
             echo "</tr>";
         }
         } else {
         foreach ($playlist as $p) {
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . "</a>" /*. "<button class=\"del\">&#128465;</button>" */."</td>";
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\"  hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s '}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . 
+            //"<a href=\"index.php?x=$p->playlist_id\" hx-trigger=\"click\" hx-get=\"./test2.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#displayPlaylistName\" hx-swap=\"innerHTML\" class=\"click\"" . "</a>" .
+            "</a>" /*. "<button class=\"del\">&#128465;</button>" */."</td>";
             echo "</tr>";
         }
     }
@@ -656,13 +746,72 @@
             $pId = $p["playlist_id"];
             $pType = $p["playlistType"];
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" class=\"click\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . "</a>" . "</td>";
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$pId\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . 
+            //"<div href=\"index.php?x=$pId\" hx-trigger=\"click\" hx-get=\"./test.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#displayPlaylistName\" hx-swap=\"innerHTML\" class=\"click\"" . "</div>" .
+            "</a>" . "</td>";
             echo "</tr>";
         }
+        //if (isset($_GET["x"])) {
+            echo "<tr class=\"s1\">";       
+            //$pId = $p["playlist_id"];
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$likedSongsId\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$likedSongsId\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . "Liked Songs" . "<div class=\"pTypeDisplay\"></div>" . "</a>" . "</td>";
+            echo "</tr>";
+        //}
         echo "</tbody>";
         echo "</table>";
         echo "</div>";
 
+}
+
+public function playlistTest() {
+    $playlist = $this->userPlaylist();
+    $sortedPlaylist = $this->sortedPlaylists();
+    $likedPlaylists = $this->getUserLikedPlaylists();
+    $likedSongsId = $this->getUserLikedSongs();
+    /*print_r($likedPlaylists);
+    print_r($playlist);*/
+    echo "<div class=\"playlistsContainer\">";
+    echo "<table class=\"playlistTable\">";
+    echo "<thead>";
+    echo "</thead>";
+    echo "<tbody>";
+
+    if (isset($_POST["sort"])) {
+    //foreach ($sortedPlaylist as $p) {
+        $pName = $sortedPlaylist["playlist_name"];
+        $pId = $likedPlaylists["playlist_id"];
+        $pType = $likedPlaylists["playlistType"];
+        echo "<tr class=\"s1\">";
+        echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" class=\"click\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . "</a>" . "</td>";
+        echo "</tr>";
+    //}
+    } else {
+    //foreach ($playlist as $p) {
+        $pName = $playlist["playlist_name"];
+        $pId = $playlist["playlist_id"];
+        $pType = $playlist["playlistType"];
+        echo "<tr class=\"s1\">";
+        echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" class=\"click\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . "</a>" . "</td>";
+        echo "</tr>";
+    //}
+}
+    echo "<tr>";
+    echo "<td id=\"liked\">Liked playlists</td>";
+    echo "</tr>";
+    //foreach ($likedPlaylists as $p) {
+        $pName = $likedPlaylists["playlist_name"];
+        $pId = $likedPlaylists["playlist_id"];
+        $pType = $likedPlaylists["playlistType"];
+        echo "<tr class=\"s1\">";
+        echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" class=\"click\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . "</a>" . "</td>";
+        echo "</tr>";
+    //}
+    echo "<tr class=\"s1\">";        
+    echo "<td class=\"songId\">" . "<a href=\"index.php?x=$likedSongsId\" class=\"click\">" . "Liked Songs" . "<div class=\"pTypeDisplay\"></div>" . "</a>" . "</td>";
+    echo "</tr>";
+    echo "</tbody>";
+    echo "</table>";
+    echo "</div>";
 }
 
     public function displayPublicPlaylists() {
@@ -715,11 +864,10 @@
         return $sql->fetchAll();
     }
 
-    private function getPlaylistType() 
+    private function getPlaylistType($pName) 
     {
-        $sql = $this->pdo->prepare("SELECT playlistType FROM playlists WHERE playlist_name=" . "\"".$_POST["insertPlaylist"]."\"");
+        $sql = $this->pdo->prepare("SELECT playlistType FROM playlists WHERE playlist_name=\"$pName\"");
         $sql->execute();
-        $sql->setFetchMode(PDO::FETCH_CLASS,"Playlists");
         return $sql->fetchAll();
     }
 
@@ -776,11 +924,12 @@
                 echo "<div class=\"ERR\">Error: Please input a file.</div>";
             } else if (isset($_POST["songName"]) && isset($_POST["insertPlaylist"]) && !empty($_FILES["audio-file"]["name"])) 
             {
-                $p = $this->getPlaylistType();
+                $pName = $_POST["insertPlaylist"];
+                $p = $this->getPlaylistType($pName);
                 foreach ($p as $b) {
-                    $b->playlistType;
+                    $b["playlistType"];
                 }
-                    $temp = $b->playlistType;
+                    $temp = $b["playlistType"];
                 if ($temp == "Local") {
                     $songName = $_POST["songName"];
                     $audioFileTmpName = $_FILES["audio-file"]["tmp_name"];
