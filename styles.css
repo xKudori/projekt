@@ -538,8 +538,6 @@ input, textarea {
     flex-direction: row;
 }   
 
-
-
 #songsTitle {
     display: flex;
     flex-direction: row;
@@ -576,4 +574,9 @@ input, textarea {
 
 .loginFormInput:hover {
     border-color:#60017B;
+}
+
+.logout {
+    text-decoration: none;
+    color: black;
 }

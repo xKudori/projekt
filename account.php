@@ -31,19 +31,45 @@
                     <p id="accusername">
                         <?php
                             if (isset($_GET["u"])) {
-                                echo $_GET["u"];
-                            }
+                                if ($_GET["u"] == "admin") {
+                                echo "Welcome to the Admin Panel";
+                                } else {
+                                    echo $_GET["u"];
+                                }
+                            } 
+                        
                         ?>
                     </p>
                     <?php
                         if ($_SESSION["username"] == $_GET["u"]) {
-                            echo "<a href=\"logout.php\">(Logout)</a>";
+                            if ($_GET["u"] != "admin" && $_SESSION["username"] != "admin") {
+                            echo "<button><a href=\"logout.php\" class=\"logout\">Logout</a></button>";
+                            echo "<form action=\"\" method=\"post\">
+                                <button name=\"deleteUser\">Delete Account</button>
+                            </form>";
+                            if (isset($_POST["deleteUser"])) {
+                                $x->deleteUser($_GET["u"]);
+                            }
+                        } 
+                    } else {
+                        if ($_GET["u"] != "admin" && $_SESSION["username"] == "admin") {
+                            echo "<form action=\"\" method=\"post\">
+                                <button name=\"deleteUser\">Delete User</button>
+                            </form>";
+
+                            if (isset($_POST["deleteUser"])) {
+                                $x->deleteUser($_GET["u"]);
+                                echo "<script>window.location.href = './index.php;</script>";
+                            }
                         }
+                    }
                     ?>
                     <p id="userInfo">
                     <?php
+                    if ($_GET["u"] != "admin") {
                         echo $x->countSong($_GET["u"]);
                         echo $x->countPlaylists($_GET["u"]);
+                    }
                     ?>
                     </p>
                 </div>
@@ -53,9 +79,12 @@
                         <button class=\"btn\" name=\"PublicPlaylists\">Public Playlists</button>
                     </form>";*/
                     $u = $_GET["u"];
-                    $u = $_GET["u"];
-                    echo "<a class=\"button\" href=\"account.php?u=$u&songs\">Songs</a>";
-                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\">Public Playlists</a>";
+                    if ($u != "admin") {
+                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\">Songs</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\">Public Playlists</a>";
+                    } else {
+                        echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
+                    }
                     ?>
                 </div>
             </div>
