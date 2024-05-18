@@ -156,8 +156,7 @@
         return $result['count'] > 0;
     }
 
-    private function getUserIdByName() {
-        $user = $_SESSION["username"];
+    private function getUserIdByName($user) {
         $sql = $this->pdo->prepare("SELECT user_id FROM users WHERE username = :user");
         $sql->bindParam(":user", $user, PDO::PARAM_STR);
         $sql->execute();
@@ -167,7 +166,7 @@
 
     public function likePlaylist($playlistId) {
     
-        $user = $this->getUserIdByName();
+        $user = $this->getUserIdByName($_SESSION["username"]);
         $sqlCheck = $this->pdo->prepare("SELECT COUNT(*) as count FROM playlist_likes WHERE user_id = :user AND playlist_id = :playlistId");
         $sqlCheck->bindParam(":user", $user, PDO::PARAM_STR);
         $sqlCheck->bindParam(":playlistId", $playlistId, PDO::PARAM_INT);
@@ -188,7 +187,7 @@
     }
 
     public function getUserLikedPlaylists() {
-        $user = $this->getUserIdByName();
+        $user = $this->getUserIdByName($_SESSION["username"]);
         $sql = $this->pdo->prepare("SELECT *
                                     FROM playlists
                                     INNER JOIN playlist_likes ON playlists.playlist_id = playlist_likes.playlist_id
@@ -199,7 +198,7 @@
     }
 
     public function isPlaylistLikedByUser($playlistId) {
-        $userId = $this->getUserIdByName(); 
+        $userId = $this->getUserIdByName($_SESSION["username"]); 
         $sql = $this->pdo->prepare("SELECT COUNT(*) AS count FROM playlist_likes WHERE user_id = :userId AND playlist_id = :playlistId");
         $sql->bindParam(":userId", $userId, PDO::PARAM_INT);
         $sql->bindParam(":playlistId", $playlistId, PDO::PARAM_INT);
@@ -209,7 +208,7 @@
     }
 
     public function countPlaylistLikes($playlistId) {
-        $userId = $this->getUserIdByName(); 
+        $userId = $this->getUserIdByName($_SESSION["username"]); 
         $sql = $this->pdo->prepare("SELECT COUNT(*) AS count FROM playlist_likes WHERE playlist_id = :playlistId");
         $sql->bindParam(":playlistId", $playlistId, PDO::PARAM_INT);
         $sql->execute();
@@ -222,6 +221,39 @@
             $sql->execute();
             $sql->setFetchMode(PDO::FETCH_CLASS,"Songs");
             return $sql->fetchAll();
+    }
+
+
+    public function deleteUser($username) {
+
+        $userId = $this->getUserIdByName($username);
+        $this->pdo->beginTransaction();
+
+
+        $sql = $this->pdo->prepare("DELETE FROM playlist_songs WHERE playlist_id IN
+        (SELECT playlist_id FROM playlists WHERE user = :user)
+    ");
+    $sql->bindParam(":user", $username, PDO::PARAM_STR);
+    $sql->execute();
+
+
+        $sql = $this->pdo->prepare("DELETE FROM songs WHERE user = :user");
+        $sql->bindParam(":user", $username, PDO::PARAM_STR);
+        $sql->execute();
+
+        $sql = $this->pdo->prepare("DELETE FROM playlists WHERE user = :user");
+        $sql->bindParam(":user", $username, PDO::PARAM_STR);
+        $sql->execute();
+
+        $sql = $this->pdo->prepare("DELETE FROM users WHERE user_id = :user_id");
+        $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
+        $sql->execute();
+
+        $this->pdo->commit();
+
+        if ($_GET["u"] != "admin") {
+            echo "<script>window.location.href = './login.php';</script>";
+        }
     }
 
     public function playlistQueryDisplay() {
@@ -257,6 +289,7 @@
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
+        if ($_GET["query"] != "admin")
         foreach ($users as $u) {
             $username = $u["username"];
             echo "<tr>";
@@ -267,6 +300,8 @@
         echo "</tbody>";
         echo "</table>";
     }
+
+
 
     public function songDisplayHtml() 
     { 
@@ -348,6 +383,7 @@
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
+                echo "<button name=\"insertIntoLiked\" class=\"localTitle\">Like Song</button>" . "</td>";
                 echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
                 echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
                 echo "</form>";
@@ -381,7 +417,7 @@
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
                 echo "</tr>";
             echo "</form>";
-            } else if ($tempVal == "User" && $_GET["u"] == $_SESSION["username"]) {
+            } else if ($tempVal == "User" && ($_GET["u"] == $_SESSION["username"]) || $_SESSION["username"] == "admin") {
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<button name=\"deleteSong\" class=\"localTitle\" value=\"$songId\">Delete Song</button>" . "</td>"; 
@@ -432,13 +468,18 @@
             echo "<td>" . $songName . "</td>";
             echo "<td>" . $song["user"] . "</td>";
             echo "<td>" . $song["length"] . "</td>";
-            echo "<td>" . "<div class=\"Help\">" . "..." . "<span class=\"helpText\">"; 
+            echo "<td>" . "<div class=\"Help\">" . "Option" . "<span class=\"helpText\">"; 
             $publicOrPrivatePlaylist = $this->getPublicOrPrivatePlaylist($songId);
             echo "<div class=\"playlistsContainer\">";
             echo "<table class=\"playlistTable\">";
             echo "<thead>";
             echo "</thead>";
             echo "<tbody>";
+            if ($_SESSION["username"] == "admin") {
+                echo "<form method=\"post\">";
+                echo "<button name=\"deleteSong\" class=\"localTitle\" value=\"$songId\">Delete Song</button>"; 
+                echo "</form>";
+            }
             foreach ($publicOrPrivatePlaylist as $p) {
 
                 echo "<tr class=\"s1\">";
@@ -461,12 +502,16 @@
         echo "</table>";
         echo "</div>";
 
-        if ((isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) || isset($_POST["removeSong"]) || isset($_POST["changeSongName"]))  {
-        if (isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) {
+        if (((isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) || isset($_POST["insertIntoLiked"])) || isset($_POST["removeSong"]) || isset($_POST["changeSongName"]))  {
+        if ((isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) || isset($_POST["insertIntoLiked"])) {
             $songId = $_POST["insertSongId"];
-            $playlistId = $this->getPlaylistIdByNameUserVer($_POST["insertIntoPlaylist"]);
-    
-            $this->addSongToPlaylist($songId,$playlistId);
+            if (isset($_POST["insertIntoPlaylist"])) {
+                $playlistId = $this->getPlaylistIdByNameUserVer($_POST["insertIntoPlaylist"]);
+                $this->addSongToPlaylist($songId,$playlistId);
+            } else if (isset($_POST["insertIntoLiked"])){
+                $likeId = $this->getUserLikedSongs();
+                $this->addSongToPlaylist($songId,$likeId);
+            }
             if (isset($_GET["u"])) {
                 if (isset($_GET["songs"])) {
                     if (isset($x)) {
@@ -486,7 +531,8 @@
                 }
             }
 
-        } if (isset($_POST["deleteSong"]) && empty($_POST["changeSongName"])) {
+        }  
+        if (isset($_POST["deleteSong"]) && empty($_POST["changeSongName"])) {
             $newSongId = $_POST["deleteSong"];
             $this->deleteSongFromPlaylistSongs($newSongId);
             $this->deleteSong($newSongId);
@@ -874,10 +920,14 @@ public function playlistTest() {
     public function getSearchQueryUsers() {
         if (isset($_GET["query"])) {
             $searchQuery = $_GET["query"];
-            $sql = $this->pdo->prepare("SELECT * FROM users WHERE username = :Uname");
-            $sql->bindParam(":Uname", $searchQuery, PDO::PARAM_STR);
-            $sql->execute();
-            return $sql->fetchAll();
+            if ($searchQuery == "admin") {
+                echo "ERR";
+            } else {
+                $sql = $this->pdo->prepare("SELECT * FROM users WHERE username = :Uname");
+                $sql->bindParam(":Uname", $searchQuery, PDO::PARAM_STR);
+                $sql->execute();
+                return $sql->fetchAll();
+            }
         }
     }
 

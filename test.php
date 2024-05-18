@@ -36,15 +36,40 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                 <div id=\"displayUserName\">
                     <p id=\"accusername\">
                         ";
-                            if (isset($_GET["u"])) {
+
+                        if (isset($_GET["u"])) {
+                            if ($_GET["u"] == "admin") {
+                            echo "Welcome to the Admin Panel";
+                            } else {
                                 echo $_GET["u"];
                             }
+                        } 
+
                         echo "
                     </p>
                     ";
-                        if ($_SESSION["username"] == $_GET["u"]) {
-                            echo "<a href=\"logout.php\">(Logout)</a>";
+                    if ($_SESSION["username"] == $_GET["u"]) {
+                        if ($_GET["u"] != "admin" && $_SESSION["username"] != "admin") {
+                        echo "<button><a href=\"logout.php\" class=\"logout\">Logout</a></button>";
+                        echo "<form action=\"\" method=\"post\">
+                            <button name=\"deleteUser\">Delete Account</button>
+                        </form>";
+                        if (isset($_POST["deleteUser"])) {
+                            $x->deleteUser($_GET["u"]);
                         }
+                    } 
+                } else {
+                    if ($_GET["u"] != "admin" && $_SESSION["username"] == "admin") {
+                        echo "<form action=\"\" method=\"post\">
+                            <button name=\"deleteUser\" hx-trigger=\"click\" hx-post=\"./test.php?u=$u\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\"\">Delete User</button>
+                        </form>";
+
+                        if (isset($_POST["deleteUser"])) {
+                            $x->deleteUser($_GET["u"]);
+                            echo "<script>window.location.href = './index.php;</script>";
+                        }
+                    }
+                }
                     echo "
                     <p id=\"userInfo\">
                     ";
@@ -54,37 +79,22 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                     </p>
                 </div>
                 <div id=\"displayChoice\">";
-                    echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./test2.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
-                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./test2.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
+
+                if ($u != "admin") {
+                    echo "<a class=\"button\" href=\"account.php?u=$u&songs hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Songs</a>";
+                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Public Playlists</a>";
+                } else {
+                    echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
+                }
                     echo "
-                    
                 </div>
             </div>
         ";
         echo "<div id=\"resultContainer\"";
-        if (isset($_GET["playlists"])) {
-        echo "
-        <table id=\"userPublicPlaylists\">
-        <thead>
-            <tr>
-                <th>$u's Public Playlists</th>
-            </tr>
-        </thead>
-        <tbody>";
-            if (isset($_GET["playlists"])) {
-            $x->displayPublicPlaylists();
-            echo "
-        </tbody>
-    </table>
-        ";
-    } else if (isset($_GET["songs"])) {
-        $x->songDisplayHtml();
-    }
+
     echo "
     </div>
-    </div>
     ";
-}
 
 }
 
