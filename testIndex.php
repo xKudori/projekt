@@ -6,8 +6,6 @@ require("./db.php");
 
 $x = new Db_Connection("localhost","music_site","root","");
 
-$_SESSION["playlist"] = $_GET["x"];
-
 require_once("./navbar.php");
 
 $x->playlistNameDisplayHtml();

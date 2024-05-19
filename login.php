@@ -14,10 +14,6 @@
         <br>
         <input type="text" name="Uname" class="loginFormInput">
         <br>
-        <label for="email">Email</label>
-        <br>
-        <input type="text" name="email" class="loginFormInput">
-        <br>
         <label for="password">Password</label> 
         <br>
         <input type="password" name="password" class="loginFormInput">

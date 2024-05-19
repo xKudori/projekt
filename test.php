@@ -51,8 +51,9 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                     if ($_SESSION["username"] == $_GET["u"]) {
                         if ($_GET["u"] != "admin" && $_SESSION["username"] != "admin") {
                         echo "<button><a href=\"logout.php\" class=\"logout\">Logout</a></button>";
-                        echo "<form action=\"\" method=\"post\">
+                        echo "<form action=\"\" hx-post=\"account_del.php\" hx-trigger=\"click\" hx-target=\"body\" hx-swap=\"innerHTML\" method=\"post\">
                             <button name=\"deleteUser\">Delete Account</button>
+                            <input type=\"hidden\" name=\"username\" value=\"$u\"></input>
                         </form>";
                         if (isset($_POST["deleteUser"])) {
                             $x->deleteUser($_GET["u"]);
@@ -81,8 +82,8 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                 <div id=\"displayChoice\">";
 
                 if ($u != "admin") {
-                    echo "<a class=\"button\" href=\"account.php?u=$u&songs hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Songs</a>";
-                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Public Playlists</a>";
+                    echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Songs</a>";
+                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Public Playlists</a>";
                 } else {
                     echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                 }

@@ -31,10 +31,9 @@
         return $count > 0; 
     }
 
-    public function loginUser($username, $password, $email) {
-        $sql = $this->pdo->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
+    public function loginUser($username, $password) {
+        $sql = $this->pdo->prepare("SELECT * FROM users WHERE username = :username");
         $sql->bindParam(":username", $username, PDO::PARAM_STR);
-        $sql->bindParam(":email", $email, PDO::PARAM_STR);
         $sql->execute();
     
         $user = $sql->fetch(PDO::FETCH_ASSOC);
@@ -231,10 +230,19 @@
 
 
         $sql = $this->pdo->prepare("DELETE FROM playlist_songs WHERE playlist_id IN
-        (SELECT playlist_id FROM playlists WHERE user = :user)
-    ");
-    $sql->bindParam(":user", $username, PDO::PARAM_STR);
-    $sql->execute();
+        (SELECT playlist_id FROM playlists WHERE user = :user)");
+        $sql->bindParam(":user", $username, PDO::PARAM_STR);
+        $sql->execute();
+
+        $sql = $this->pdo->prepare("DELETE FROM playlist_likes WHERE playlist_id IN
+        (SELECT playlist_id FROM playlists WHERE user = :user)");
+        $sql->bindParam(":user", $username, PDO::PARAM_STR);
+        $sql->execute();
+
+        $sql = $this->pdo->prepare("DELETE FROM playlist_likes WHERE user_id =
+        (SELECT user_id FROM users WHERE username = :user)");
+        $sql->bindParam(":user", $username, PDO::PARAM_STR);
+        $sql->execute();
 
 
         $sql = $this->pdo->prepare("DELETE FROM songs WHERE user = :user");
@@ -250,10 +258,11 @@
         $sql->execute();
 
         $this->pdo->commit();
-
+/*
         if ($_GET["u"] != "admin") {
             echo "<script>window.location.href = './login.php';</script>";
         }
+        */
     }
 
     public function playlistQueryDisplay() {
@@ -383,12 +392,17 @@
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
-                echo "<button name=\"insertIntoLiked\" class=\"localTitle\">Like Song</button>" . "</td>";
                 echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
                 echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
                 echo "</form>";
                 echo "</tr>";
         }
+        echo "<form method=\"post\">";
+        echo "<td class=\"songId\">"; 
+        echo "<button name=\"insertIntoLiked\" class=\"localTitle\">Like Song</button>" . "</td>";
+        echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
+        echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
+        echo "</form>";
     } /*else if ($tempVal == "User") {
         foreach ($userPlaylist as $p) {
 
@@ -402,21 +416,23 @@
             echo "</tr>";
             
     }
-    }*/
+    }*/ //tutaj
             if ($tempVal == "Local") {
-            echo "<form method=\"post\">";
-                echo "<tr class=\"s1\">";
-                echo "<button name=\"deleteSong\" class=\"localTitle\" value=\"$songId\">Delete Song</button>" . "</td>"; 
-                echo "</tr>";
-                echo "<tr class=\"s1\">";
-                echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
-                echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
-                echo "</tr>";
-                echo "<tr class=\"s1\">";
-                echo "<input type=\"text\" name=\"changeSongName\" class=\"localTitle\" placeholder=\"Change Name\"></input>" . "</td>";
-                echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
-                echo "</tr>";
-            echo "</form>";
+                if (isset($_GET["x"])) {
+                echo "<form method=\"post\" hx-get=\"testIndex.php?$pId\" hx-target=\"#displaySong\" hx-swap=\"innerHTML\">";
+                    echo "<tr class=\"s1\">";
+                    echo "<button name=\"deleteSong\" class=\"localTitle\" value=\"$songId\">Delete Song</button>" . "</td>"; 
+                    echo "</tr>";
+                    echo "<tr class=\"s1\">";
+                    echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
+                    echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
+                    echo "</tr>";
+                    echo "<tr class=\"s1\">";
+                    echo "<input type=\"text\" name=\"changeSongName\" class=\"localTitle\" placeholder=\"Change Name\"></input>" . "</td>";
+                    echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
+                    echo "</tr>";
+                echo "</form>";
+                }
             } else if ($tempVal == "User" && ($_GET["u"] == $_SESSION["username"]) || $_SESSION["username"] == "admin") {
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
@@ -511,7 +527,7 @@
             } else if (isset($_POST["insertIntoLiked"])){
                 $likeId = $this->getUserLikedSongs();
                 $this->addSongToPlaylist($songId,$likeId);
-            }
+            }/*
             if (isset($_GET["u"])) {
                 if (isset($_GET["songs"])) {
                     if (isset($x)) {
@@ -529,7 +545,7 @@
                 if (isset($pId)) {
                     echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
                 }
-            }
+            }*/
 
         }  
         if (isset($_POST["deleteSong"]) && empty($_POST["changeSongName"])) {
@@ -539,16 +555,16 @@
             if (isset($_GET["u"])) {
                 if (isset($_GET["songs"])) {
                     if (isset($x)) {
-                        echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                        //echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
                     }
                 }
             } else if (isset($_GET["playlists"])) {
                 if (isset($x)) {
-                    echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                    //echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
                 }
             } else {
                 if (isset($pId)) {
-                    echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                    //echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
                 }
             }
         } else if (isset($_POST["removeSong"]) && empty($_POST["changeSongName"])) {
@@ -558,16 +574,16 @@
             if (isset($_GET["u"])) {
                 if (isset($_GET["songs"])) {
                     if (isset($x)) {
-                        echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                        //echo "<script>window.location.href = './account.php?u=$x&songs' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
                     }
                 }
             } else if (isset($_GET["playlists"])) {
                 if (isset($x)) {
-                    echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
+                    //echo "<script>window.location.href = './account.php?u=$x&playlists' hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; //header nie dziala :(
                 }
             } else {
                 if (isset($pId)) {
-                    echo "<script>window.location.href = './index.php' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                    //echo "<script>window.location.href = './index.php' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
                 }
             }
         }
@@ -578,15 +594,15 @@
             if (isset($_GET["u"])) {
                 if (isset($_GET["songs"]))
                 if (isset($x)) {
-                    echo "<script>window.location.href = './account.php?u=$x&songs'</script> hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";"; //header nie dziala :(
+                    //echo "<script>window.location.href = './account.php?u=$x&songs'</script> hx-trigger=\"click\" hx-get=\"./test.php?u=$x&songs\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";"; //header nie dziala :(
                 }
             } else if (isset($_GET["playlists"])) {
                 if (isset($x)) {
-                    echo "<script>window.location.href = './account.php?u=$x&playlists'</script> hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";"; //header nie dziala :(
+                    //echo "<script>window.location.href = './account.php?u=$x&playlists'</script> hx-trigger=\"click\" hx-get=\"./test.php?u=$x&playlists\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";"; //header nie dziala :(
                 }
             } else {
                 if (isset($pId)) {
-                    echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
+                    //echo "<script>window.location.href = './index.php?x=$pId' hx-trigger=\"click\" hx-get=\"./test.php?x=$pId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\";</script>"; 
                 }
             }
         }
@@ -778,7 +794,7 @@
         } else {
         foreach ($playlist as $p) {
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\"  hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s '}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . 
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$p->playlist_id\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$p->playlist_id\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" hx-push-url=\"index.php?x=$p->playlist_id\" class=\"click\">" . $p->playlist_name . "<div class=\"pTypeDisplay\">$p->playlistType Playlist</div>" . 
             //"<a href=\"index.php?x=$p->playlist_id\" hx-trigger=\"click\" hx-get=\"./test2.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#displayPlaylistName\" hx-swap=\"innerHTML\" class=\"click\"" . "</a>" .
             "</a>" /*. "<button class=\"del\">&#128465;</button>" */."</td>";
             echo "</tr>";
@@ -792,7 +808,7 @@
             $pId = $p["playlist_id"];
             $pType = $p["playlistType"];
             echo "<tr class=\"s1\">";
-            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$pId\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . 
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$pId\" hx-replace-url=\"index.php?x=$pId\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$pId\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\" hx-push-url=\"index.php?x=$pId\">" . $pName . "<div class=\"pTypeDisplay\">$pType Playlist</div>" . 
             //"<div href=\"index.php?x=$pId\" hx-trigger=\"click\" hx-get=\"./test.php?x=$p->playlist_id\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#displayPlaylistName\" hx-swap=\"innerHTML\" class=\"click\"" . "</div>" .
             "</a>" . "</td>";
             echo "</tr>";
@@ -800,7 +816,7 @@
         //if (isset($_GET["x"])) {
             echo "<tr class=\"s1\">";       
             //$pId = $p["playlist_id"];
-            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$likedSongsId\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$likedSongsId\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\">" . "Liked Songs" . "<div class=\"pTypeDisplay\"></div>" . "</a>" . "</td>";
+            echo "<td class=\"songId\">" . "<a href=\"index.php?x=$likedSongsId\" hx-trigger=\"click\" hx-get=\"./testIndex.php?x=$likedSongsId\" hx-headers=\"{'X-Session-Data': '$s'}\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\" class=\"click\" hx-push-url=\"index.php?x=$likedSongsId\">" . "Liked Songs" . "<div class=\"pTypeDisplay\"></div>" . "</a>" . "</td>";
             echo "</tr>";
         //}
         echo "</tbody>";
@@ -1165,11 +1181,11 @@ public function playlistTest() {
     {
 
         if ((!isset($_POST["btn1"]) && !isset($_POST["btn2"]) && !isset($_POST["songName"]) && !isset($_POST["insertPlaylist"]) && !isset($_POST["sendSong"])) || isset($_POST["esc"])) 
-        {
+        {/*
             echo "<button name=\"btn1\" class=\"button\">Upload Song</button>
             <br>
             <button name=\"btn2\" class=\"button\">Upload files to Local Playlist</button>";
-        }
+        */}
         if((!isset($_POST["btn1"])  && isset($_POST["btn2"]) || (isset($_POST["songName"]) || isset($_POST["insertPlaylist"]) || isset($_POST["sendSong"]))) && !isset($_POST["esc"])) 
         {
             echo "<button name=\"esc\">Back</button> <br>";
