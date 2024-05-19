@@ -80,8 +80,8 @@
                     </form>";*/
                     $u = $_GET["u"];
                     if ($u != "admin") {
-                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\">Songs</a>";
-                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\">Public Playlists</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"account.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"account.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
                     } else {
                         echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                     }

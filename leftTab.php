@@ -1,11 +1,37 @@
 <section id="leftTab">
+    <?php
+        if (isset($_GET["x"])) {
+            $temp = $_GET["x"];
+        }
+        if (isset($_GET["u"])) {
+            $temp = $_GET["u"];
+        }
+        if (isset($_GET["query"])) {
+            $temp = $_GET["query"];
+        }
+                        
+        //$id=$_GET["x"];
+
+    ?>
             <div id="fInputTitle">Select File</div>
             <div id="fInput">
-                <form action="" method="post" id="f2" enctype="multipart/form-data">
-                    <?php 
-                        $x->formDisplay(); 
-                    ?>
+            <div id="SongUpload">
+
+
+                <form action="" hx-post="songInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
+                        <button name="btn1" class="button">Upload Song</button>
+                        <?php
+                        //echo "<input type=\"hidden\" name=\"id\" value=\"$id\"></input>";
+                        ?>
                 </form>
+                <br>
+                <form action="" hx-post="localInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
+                        <button name="btn2" class="button">Upload files to Local Playlist</button>
+                        <?php
+                        //echo "<input type=\"hidden\" name=\"id\" value=\"$id\"></input>";
+                        ?>
+                </form>
+            </div>
             </div>
             <?php
                 $x->getSongData();
