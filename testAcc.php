@@ -20,7 +20,9 @@
         </table>
             ";
             } else if (isset($_GET["songs"])) {
+                echo "<div id=\"userSongTable\">";
                 $x->songDisplayHtml();
+                echo "</div>";
         }
 ?>
 

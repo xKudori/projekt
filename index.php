@@ -17,7 +17,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="moon3.png">
     <title>LunaChord</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+    <script src="./easyTimer/easytimer.js"></script>
 </head>
 <body>
     <section id="main">
@@ -55,6 +57,8 @@
             require_once("rightTab.php");
             require_once("bottomTab.html");
         ?>
-
+        
+<script src="./audioPlayer.js">
+    </script>
 </body>
 </html>

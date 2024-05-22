@@ -16,7 +16,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="moon3.png">
     <title>LunaChord</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+    <script src="./easyTimer/easytimer.js"></script>
 </head>
 <body>
     <section id="main">
@@ -28,13 +30,21 @@
                 require_once("navbar.php");
             ?>
             <div id="songsTitle">   
-            <form method="post">
+            <form hx-post="queryDisplay.php" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">
                 <button name="songSearchDisplay" class="btn" id="songSearchDisplay" value="Songs">Songs</button>
+                <input type="hidden" name="query" value=<?=$_GET["query"]?>>
+            </form>  
+            <form hx-post="queryDisplay.php" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">  
                 <button name="playlistSearchDisplay" class="btn" id="playlistSearchDisplay" value="Playlists">Playlists</button>
+                <input type="hidden" name="query" value=<?=$_GET["query"]?>>
+            </form>  
+            <form hx-post="queryDisplay.php" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">     
                 <button name="userSearchDisplay" class="btn" id="userSearchDisplay" value="Users">Users</button> 
+                <input type="hidden" name="query" value=<?=$_GET["query"]?>>
             </form>
             <?php
                 $q = $_GET["query"];
+                /*
                 if (isset($_POST["songSearchDisplay"])) {
                     //echo "<div id=\"currentDisplay\">Songs</div>";
                     echo "<script>window.location.href = './search.php?query=$q&songs';</script>"; 
@@ -50,7 +60,7 @@
                 else {
                     //echo "<div id=\"currentDisplay\"></div>";   
                 }
-
+*/
                 if (isset($_GET["songs"])) {
                     echo "<div id=\"currentDisplay\">Songs</div>";
                 } else if (isset($_GET["playlists"])) {
@@ -63,6 +73,7 @@
                 
                 ?>
             </div>
+            <div id="queryResult">
             <?php
             if (isset($_GET["songs"])) {
                 $x->songDisplayHtml();
@@ -74,6 +85,7 @@
                 $x->userDisplayHtml();
             }
             ?>
+            </div>
         </section>
         <?php
             require_once("rightTab.php");

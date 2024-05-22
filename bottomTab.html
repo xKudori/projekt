@@ -1,10 +1,22 @@
 <section id="bottomTab">
-    <button id="previous">&#9666;</button>
-    <button id="playBtn">&#9658;</button>
-    <button id="pauseBtn">&#10074;&#10074;</button>
-    <button id="next">&#9656;</button>
-    <h2 id="timer">00:00</h2>
-    <input type="range" min="0" max="100" step="1" id="seekSlider" value="0">
-    <h2>  &#128266;  </h2>
-    <input type="range" min="0" max="1" step="0.01" id="vol" value="0.2">
+    <div id="btnContainer">
+        <img src="./audioAssets/backward-solid.svg" alt="" id="previous" class="songBtn">
+        <img src="./audioAssets/circle-play-regular.svg" alt="" id="playBtn" class="songBtn">
+        <img src="./audioAssets/circle-pause-regular.svg" alt="" id="pauseBtn" class="songBtn">
+        <img src="./audioAssets/forward-solid.svg" alt="" id="next" class="songBtn">
+    </div>
+    <div id="time">
+        <h2 id="timer">00:00</h2>
+        <input type="range" min="0" max="100" step="1" id="seekSlider" value="0">
+    </div>
+    <div id="volume">
+        <img src="audioAssets/image.png" alt="" id="volIcon">
+    </div>
+    <div id="volSlider">
+        <input type="range" min="0" max="1" step="0.01" id="vol" value="0.2">
+    </div>
+    <div id="songImageContainer">
+        <img id="songImage" src="" alt="Song Image" style="display: none;">
+        <h2 id="songName"></h2>
+    </div>
 </section>
