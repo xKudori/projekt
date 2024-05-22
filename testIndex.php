@@ -6,7 +6,11 @@ require("./db.php");
 
 $x = new Db_Connection("localhost","music_site","root","");
 
+
+
 require_once("./navbar.php");
+
+echo "<div id=\"songDisplayContainer\">";
 
 $x->playlistNameDisplayHtml();
 
@@ -25,6 +29,12 @@ echo "<script>window.location.href = './index.php?x=$pId';</script>";
 
 $x->songDisplayHtml();
 
+
+echo "</div>";
+
+if(isset($_GET["swapDisplay"])) {
+    $x->songDisplayHtml();
+}
 ?>
 
 <script src="./audioPlayer.js">

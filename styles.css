@@ -87,8 +87,9 @@ body .logtext{
 
 .f2, #f1 {
     color: #CED8E0;
-
 }
+
+
 
 .fl{
     font-size: 3vh;
@@ -113,14 +114,14 @@ body .logtext{
 }
 
 #fInput, #createPlaylist {
-    height: 39.8%;
+    height: 39.7%;
     display: flex;
     border: 1px solid #60017B;
     border-top: none;
     border-bottom: none;
     align-items: center;
     justify-content: center;
-
+    overflow-y: auto;
 }
 
 #rightTab {
@@ -205,14 +206,29 @@ body .logtext{
 
 .displaySongs {
     width: 100.3%;
-    height: 75%;
+    height: 89.6%;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
 .songTable {
     width: 100%;
+    height: 89.6%;
     border-collapse: collapse;
+    overflow-y: auto;
+}
+
+#songDisplayContainer {
+    height: 89.6%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#userSongTable {
+    height: 40.5vh;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .userTable {
@@ -275,6 +291,7 @@ body .logtext{
   height: 10%;
   border: 1px solid #60017B;
   display: flex;
+
   justify-content: center;
   align-items: center;
 }
@@ -287,14 +304,50 @@ input[type="range"] {
     margin-right: 5px;
 }
 
+#time {
+    position: absolute;
+    left: 47vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 80%;
+}
+
+#vol {
+    position: absolute;
+    bottom: 4%; 
+    left: 77.4%;
+    transform: translateX(-50%);
+    transform: rotate(-90deg);
+    transform-origin: left 0;
+    visibility: hidden;
+}
+
+#volIcon:hover #vol{
+    visibility: visible;
+    width: 400vh;
+}
+
+
+#volume {
+    position: absolute;
+    right: 7vh;
+    top: 79.2vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 20%;
+}
+
 
 #seekSlider {
     -webkit-appearance: none;
-    width: 50%;
+    width: 55%;
     height: 10px;
     background-color: rgb(24, 9, 92);
     border-radius: 5px;
 }
+
 
 
 #seekSlider::-webkit-slider-thumb {
@@ -303,6 +356,11 @@ input[type="range"] {
     height: 20px;
     background-color: #007bff;
     border-radius: 50%;
+}
+
+#volIcon {
+    width: 50px;
+    height: 30px;
 }
 
 #seekSlider::-moz-range-thumb {
@@ -534,9 +592,17 @@ input, textarea {
 }
 
 #displayTables {
+    height: 60%;
     display: flex;
     flex-direction: row;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: auto;
 }   
+
+#userPublicPlaylists {
+    height: 100px;
+}
 
 #songsTitle {
     display: flex;
@@ -553,10 +619,15 @@ input, textarea {
 }
 
 .playlistsContainer {
-    height: 100.1%;
+    height: 99.7%;
     border: 1px solid #60017B;
     border-bottom: none;
     border-top: none;
+}
+
+#songImage {
+    width: 100px; 
+    height: 100px;
 }
 
 .del {
@@ -565,6 +636,33 @@ input, textarea {
     font-size: 50px;
     float: right;
 }
+
+
+
+.songBtn {
+    width: 35px;
+    height: 35px;
+
+}
+
+#btnContainer {
+    left: 12vh;
+    position: absolute;
+    display: flex;
+    background: rgba( 249, 79, 230, 0.8 );
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+backdrop-filter: blur( 9.5px );
+-webkit-backdrop-filter: blur( 9.5px );
+border-radius: 20px;
+}
+
+.icon1 {
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+}
+
 
 .loginFormInput {
     height: 4vh;

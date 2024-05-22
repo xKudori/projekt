@@ -1,5 +1,7 @@
 if (!window.playBtns) {
+    let play = document.getElementById("playBtn");
     let playBtns = document.querySelectorAll(".play");
+    let audioNames = document.querySelectorAll(".jsName");
     let pauseBtn = document.getElementById("pauseBtn");
     let seekSlider = document.getElementById("seekSlider");
     let vol = document.getElementById("vol");
@@ -7,18 +9,42 @@ if (!window.playBtns) {
     let currentIndex = -1;
     let previous = document.getElementById("previous");
     let next = document.getElementById("next");
+    var timer = new easytimer.Timer();
+    //var timer = new Timer();
+
+    let songNameElement = document.getElementById("songName");
+    let songImageElement = document.getElementById("songImage");
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const volIcon = document.getElementById("volIcon");
+        const volSlider = document.getElementById("vol");
+    
+        volIcon.addEventListener("click", function() {
+            if (volSlider.style.visibility === "hidden" || volSlider.style.visibility === "") {
+                volSlider.style.visibility = "visible";
+            } else {
+                volSlider.style.visibility = "hidden";
+            }
+        });
+    });
 
     function updatePlayBtns() {
         playBtns = document.querySelectorAll(".play");
     }
-
 
     function playSong(index) {
         let filePath = playBtns[index].value;
         audio.src = filePath;
         audio.play();
         currentIndex = index;
-        startTimerOnPlay();
+        
+        let songName = playBtns[index].querySelector(".jsName").value;
+        let songImagePath = playBtns[index].querySelector(".jsImage").value;
+
+        songNameElement.textContent = songName;
+        songImageElement.src = songImagePath;
+        songImageElement.style.display = "block";
     }
 
     function playNextSong() {
@@ -37,6 +63,7 @@ if (!window.playBtns) {
 
     audio.addEventListener("ended", function() {
         playNextSong();
+        timer.reset();
     });
 
 
@@ -64,42 +91,45 @@ if (!window.playBtns) {
         audio.currentTime = newPosition;
     }
 
-    function startTimer(duration) {
-        var timer = 0, minutes, seconds;
-        var interval = setInterval(function () {
-            minutes = Math.floor(timer / 60);
-            seconds = timer % 60;
+    function resumeAudio() {
+        audio.play();
+        timer.start();
+    }
+    
 
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
+    timer.addEventListener('secondsUpdated', function (e) {
+        $('#bottomTab #timer').html(timer.getTimeValues().toString(['minutes', 'seconds']));
+    });
 
-            document.getElementById('timer').textContent = minutes + ':' + seconds;
+    timer.addEventListener('started', function (e) {
+        $('#bottomTab #timer').html(timer.getTimeValues().toString('minutes', 'seconds'));
+    });
 
-            timer++;
+    timer.addEventListener('reset', function (e) {
+        $('#bottomTab #timer').html(timer.getTimeValues().toString(['minutes', 'seconds']));
+    });
 
-            if (timer > duration) {
-                clearInterval(interval);
+    $('#bottomTab #playBtn').click(function () {
+        timer.start();
+    });
+
+    $('#bottomTab #pauseBtn').click(function () {
+        timer.pause();
+    });
+
+    $('#bottomTab #previous').click(function () {
+        timer.reset();
+    });
+
+    $('#bottomTab #playBtn').click(function() {
+        if (audio.paused) {
+            if (audio.src) {
+                resumeAudio();
+            } else {
+                playSong(0);
             }
-        }, 1000);
-    }
-
-    function startTimerOnPlay() {
-        var duration = audio.duration;
-        startTimer(duration);
-    }
-
-    function stopTimer() {
-        clearInterval(timerInterval);
-    }
-
-    function test() {
-        console.log("TEST");
-    }
-
-    audio.addEventListener('play', startTimerOnPlay);
-
-    pauseBtn.addEventListener('click', stopTimer);
-
+        }
+    });
 
 
     seekSlider.addEventListener("input", seekAudio)
@@ -107,6 +137,8 @@ if (!window.playBtns) {
         updatePlayBtns();
         playBtn.addEventListener("click", function() {
             playSong(index);
+                timer.reset();
+                timer.start();
         });
     });
 
@@ -124,9 +156,6 @@ if (!window.playBtns) {
     next.addEventListener("click", function() {
         playNextSong();
     });
-    previous.addEventListener("click",function() {
-        audio.currentTime = 0;
-    })
     previous.addEventListener("dblclick",function() {
         playPreviousSong();
     })

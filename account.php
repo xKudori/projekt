@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/x-icon" href="moon3.png">
     <title>LunaChord</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+    <script src="./easyTimer/easytimer.js"></script>
 </head>
 <body>
     <section id="main">
@@ -80,8 +83,8 @@
                     </form>";*/
                     $u = $_GET["u"];
                     if ($u != "admin") {
-                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"account.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
-                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"account.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
                     } else {
                         echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                     }
@@ -95,7 +98,7 @@
                         echo "<table id=\"userPublicPlaylists\">
                         <thead>
                             <tr>
-                                <th>$u's Public Playlists</th>
+                                <th id=\"userPublicPlaylists\">$u's Public Playlists</th>
                             </tr>
                         </thead>
                         <tbody>";
@@ -103,7 +106,9 @@
                         echo "</tbody>
                     </table>";
                     } else if (isset($_GET["songs"])) {
-                        $x->songDisplayHtml();
+                        echo "<div id=\"userSongTable\">";
+                            $x->songDisplayHtml();
+                        echo "</div>";
                     }
             ?>
         </div>
