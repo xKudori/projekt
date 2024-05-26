@@ -286,15 +286,6 @@ body .logtext{
     background-color: #60017B;
 }
 
-#bottomTab {
-  clear: both;
-  height: 10%;
-  border: 1px solid #60017B;
-  display: flex;
-
-  justify-content: center;
-  align-items: center;
-}
 
 input[type="range"] {
     margin-right: 30px;
@@ -305,22 +296,69 @@ input[type="range"] {
 }
 
 #time {
-    position: absolute;
-    left: 47vh;
     display: flex;
     flex-direction: row;
     align-items: center;
     width: 80%;
 }
 
+#bottomTab {
+    clear: both;
+    height: 10%;
+    border: 1px solid #60017B;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+#btnContainer {
+    margin-left: 6.5%;
+    margin-right: 7%;
+    display: flex;
+    background: rgba( 249, 79, 230, 0.8 );
+box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+backdrop-filter: blur( 9.5px );
+-webkit-backdrop-filter: blur( 9.5px );
+border-radius: 20px;
+}
+
+
+.songBtn {
+    width: 35px;
+    height: 35px;
+
+}
+
+#songImage {
+    width: 56px; 
+    height: 56px;
+    margin-right: 10px;
+}
+
+#songImageContainer {
+    font-size: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 40%; 
+    height: 100%;
+}
+
+#volSlider {
+    width: 3px;
+}
+
 #vol {
-    position: absolute;
-    bottom: 4%; 
-    left: 77.4%;
     transform: translateX(-50%);
     transform: rotate(-90deg);
     transform-origin: left 0;
     visibility: hidden;
+}
+
+#volIcon {
+    width: 50px;
+    height: 30px;
 }
 
 #volIcon:hover #vol{
@@ -330,9 +368,7 @@ input[type="range"] {
 
 
 #volume {
-    position: absolute;
-    right: 7vh;
-    top: 79.2vh;
+    margin-left: 5%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -342,7 +378,7 @@ input[type="range"] {
 
 #seekSlider {
     -webkit-appearance: none;
-    width: 55%;
+    width: 70vh;
     height: 10px;
     background-color: rgb(24, 9, 92);
     border-radius: 5px;
@@ -356,11 +392,6 @@ input[type="range"] {
     height: 20px;
     background-color: #007bff;
     border-radius: 50%;
-}
-
-#volIcon {
-    width: 50px;
-    height: 30px;
 }
 
 #seekSlider::-moz-range-thumb {
@@ -423,7 +454,6 @@ input[type="range"] {
 
 .helpText {
     width: 0;
-    overflow: hidden;
     transition: width 0.4s;
     visibility: hidden;
     text-align: center;
@@ -625,10 +655,7 @@ input, textarea {
     border-top: none;
 }
 
-#songImage {
-    width: 100px; 
-    height: 100px;
-}
+
 
 .del {
     background-color: black;
@@ -639,22 +666,6 @@ input, textarea {
 
 
 
-.songBtn {
-    width: 35px;
-    height: 35px;
-
-}
-
-#btnContainer {
-    left: 12vh;
-    position: absolute;
-    display: flex;
-    background: rgba( 249, 79, 230, 0.8 );
-box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-backdrop-filter: blur( 9.5px );
--webkit-backdrop-filter: blur( 9.5px );
-border-radius: 20px;
-}
 
 .icon1 {
     display: flex;

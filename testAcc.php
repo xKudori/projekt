@@ -26,5 +26,3 @@
         }
 ?>
 
-<script src="./audioPlayer.js">
-    </script>
