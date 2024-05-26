@@ -117,8 +117,6 @@
             require_once("rightTab.php");
             require_once("bottomTab.html");
         ?>
-    <script src="./audioPlayer.js">
-    
-    </script>
+
 </body>
 </html>

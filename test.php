@@ -101,5 +101,3 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
 
 ?>
 
-<script src="./audioPlayer.js">
-    </script>

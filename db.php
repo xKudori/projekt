@@ -1041,7 +1041,7 @@ public function playlistTest() {
 
                     $songId = $this->pdo->lastInsertId();
 
-                    $playlistId = $this->getPlaylistIdByName($_POST["insertPlaylist"]);
+                    $playlistId = $this->getPlaylistIdByNameUserVer($_POST["insertPlaylist"]);
                     $this->addSongToPlaylist($songId, $playlistId);
                 } 
             } else {
