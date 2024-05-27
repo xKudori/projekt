@@ -121,7 +121,7 @@ body .logtext{
     border-bottom: none;
     align-items: center;
     justify-content: center;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 #rightTab {
@@ -414,6 +414,7 @@ border-radius: 20px;
 
 }
 
+
 .playlistTable th, .playlistTable td {
     width: 100%;
     border-collapse: collapse;
@@ -452,6 +453,12 @@ border-radius: 20px;
     position: relative;
 }
 
+#like {
+    position: absolute;
+    left: 92vh;
+    top: 13vh;
+}
+
 .helpText {
     width: 0;
     transition: width 0.4s;
@@ -465,6 +472,7 @@ border-radius: 20px;
 .Help:hover .helpText {
     width: 19vh;
     visibility: visible;
+    position: fixed;
 }
 
 .questionMark:hover .helpText {
@@ -664,16 +672,16 @@ input, textarea {
     float: right;
 }
 
-
-
-
 .icon1 {
     display: flex;
     align-items: center;
     text-align: center;
-
 }
 
+.rename {
+    margin-left: 1vh;
+    width: 20%;
+}
 
 .loginFormInput {
     height: 4vh;
@@ -689,3 +697,4 @@ input, textarea {
     text-decoration: none;
     color: black;
 }
+

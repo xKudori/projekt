@@ -36,7 +36,7 @@
                 $pId = $_GET["x"];
             echo"
             <form method=\"post\">
-            <button name=\"likePlaylist\" value=\"$pId\">Like</button>
+            <button name=\"likePlaylist\" value=\"$pId\" id=\"like\">Like</button>
             </form>";
             if (isset($_POST["likePlaylist"])) {
             $x->likePlaylist($pId);
