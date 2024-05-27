@@ -12,7 +12,7 @@
         <input type=\"file\" name=\"audio-file\" id=\"audio-file\" accept=\".ogg, .flac, .mp3\">
         <br>
         <label for=\"image\">Image file: </label>
-        <input type=\"file\" name=\"image\" id=\"audio-file\">
+        <input type=\"file\" name=\"image\" id=\"audio-file\" accept=\".png, .jpg\">
         <br>
         <br>
         <label for=\"songName\">Name:</label>
