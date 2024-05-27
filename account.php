@@ -62,7 +62,7 @@
 
                             if (isset($_POST["deleteUser"])) {
                                 $x->deleteUser($_GET["u"]);
-                                echo "<script>window.location.href = './index.php;</script>";
+                                echo "<script>window.location.href = './account.php?u=admin;</script>";
                             }
                         }
                     }
@@ -83,8 +83,8 @@
                     </form>";*/
                     $u = $_GET["u"];
                     if ($u != "admin") {
-                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
-                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#displayTables\" hx-swap=\"innerHTML\">Songs</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#displayTables\" hx-swap=\"innerHTML\">Public Playlists</a>";
                     } else {
                         echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                     }

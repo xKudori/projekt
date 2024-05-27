@@ -1,17 +1,9 @@
-document.addEventListener("htmx:afterSwap", (event) => {
-    if (event.detail.target.id === "playlistContainer" || event.detail.target.id === "middleTab") {
-        initializeAudioPlayer();
-    }
-});
 
-document.addEventListener("DOMContentLoaded", initializeAudioPlayer);
 
-function initializeAudioPlayer() {
+var audio = null;
+var timer = null;
+
     let playBtns = document.querySelectorAll(".play");
-    let audio = window.audio || new Audio(); 
-    window.audio = audio;
-    let timer = window.timer || new easytimer.Timer(); 
-    window.timer = timer;
     let currentIndex = -1;
     let pauseBtn = document.getElementById("pauseBtn");
     let seekSlider = document.getElementById("seekSlider");
@@ -21,12 +13,27 @@ function initializeAudioPlayer() {
     let songNameElement = document.getElementById("songName");
     let songImageElement = document.getElementById("songImage");
 
+    if (audio) {
+        audio.pause();
+        audio = null;
+    }
+
+    if (timer) {
+        timer.stop();
+        timer = null;
+    }
+
+    audio = new Audio();
+    timer = new easytimer.Timer();
+
     function playSong(index) {
         if (currentIndex !== -1 && currentIndex !== index) {
             audio.pause();
+            timer.stop();
             timer.reset();
         }
 
+        playBtns = document.querySelectorAll(".play");
         let filePath = playBtns[index].value;
         audio.src = filePath;
         audio.play();
@@ -39,7 +46,7 @@ function initializeAudioPlayer() {
         songImageElement.src = songImagePath;
         songImageElement.style.display = "block";
 
-        timer.reset();
+        timer.stop();
         timer.start({precision: 'secondTenths', startValues: {seconds: audio.currentTime}});
     }
 
@@ -62,6 +69,7 @@ function initializeAudioPlayer() {
 
     audio.addEventListener("ended", function() {
         playNextSong();
+        timer.stop();
         timer.reset();
     });
 
@@ -85,7 +93,7 @@ function initializeAudioPlayer() {
         let newPosition = audio.duration * (seekSlider.value / 100);
         audio.currentTime = newPosition;
         if (!audio.paused) {
-            timer.reset();
+            timer.stop();
             timer.start({precision: 'secondTenths', startValues: {seconds: newPosition}});
         } else {
             document.getElementById('timer').textContent = formatTime(newPosition);
@@ -140,6 +148,13 @@ function initializeAudioPlayer() {
             playSong(index);
         });
     });
-}
 
-initializeAudioPlayer();
+
+document.addEventListener("htmx:afterSwap", (event) => {
+    let playBtns = document.querySelectorAll(".play");
+    playBtns.forEach(function(playBtn, index) {
+        playBtn.addEventListener("click", function() {
+            playSong(index);
+        });
+    });
+});

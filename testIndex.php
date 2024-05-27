@@ -18,7 +18,7 @@ if (isset($_GET["x"]) && $x->isUserPlaylist($_GET["x"]) == false && $x->isPlayli
     $pId = $_GET["x"];
 echo"
 <form method=\"post\">
-<button name=\"likePlaylist\" value=\"$pId\">Like</button>
+<button name=\"likePlaylist\" value=\"$pId\" id=\"like\">Like</button>
 </form>";
 if (isset($_POST["likePlaylist"])) {
 $x->likePlaylist($pId);
@@ -37,5 +37,3 @@ if(isset($_GET["swapDisplay"])) {
 }
 ?>
 
-<script src="./audioPlayer.js">
-    </script>
