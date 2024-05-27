@@ -305,6 +305,7 @@ input[type="range"] {
 #bottomTab {
     clear: both;
     height: 10%;
+    width: auto;
     border: 1px solid #60017B;
     display: flex;
     flex-direction: row;
@@ -313,8 +314,7 @@ input[type="range"] {
   }
 
 #btnContainer {
-    margin-left: 6.5%;
-    margin-right: 7%;
+    margin: 7%;
     display: flex;
     background: rgba( 249, 79, 230, 0.8 );
 box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
@@ -357,6 +357,7 @@ border-radius: 20px;
 }
 
 #volIcon {
+    margin: 50%;
     width: 50px;
     height: 30px;
 }
@@ -368,7 +369,6 @@ border-radius: 20px;
 
 
 #volume {
-    margin-left: 5%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -377,6 +377,7 @@ border-radius: 20px;
 
 
 #seekSlider {
+
     -webkit-appearance: none;
     width: 70vh;
     height: 10px;
@@ -464,15 +465,36 @@ border-radius: 20px;
     transition: width 0.4s;
     visibility: hidden;
     text-align: center;
+    position: fixed;
+    z-index: 1;
+    background-color: #0D1B27;
+    overflow: hidden;
+}
+
+.helpText2 {
+    width: 0;
+    transition: width 0.4s;
+    visibility: hidden;
+    text-align: center;
     position: absolute;
     z-index: 1;
     background-color: #0D1B27;
+    overflow: hidden; 
 }
 
 .Help:hover .helpText {
+    width: 16vh;
+    visibility: visible;
+
+}
+
+.songNameInTable {
+    width:10vh;
+}
+
+.Help:hover .helpText2 {
     width: 19vh;
     visibility: visible;
-    position: fixed;
 }
 
 .questionMark:hover .helpText {
@@ -509,6 +531,10 @@ border-radius: 20px;
     align-items: center;
     color: #CED8E0;
     border-left: 1px solid #333;
+}
+
+#localTitle {
+    width: 70%;
 }
 
 .localTitle {
@@ -657,7 +683,7 @@ input, textarea {
 }
 
 .playlistsContainer {
-    height: 99.7%;
+    height: auto;
     border: 1px solid #60017B;
     border-bottom: none;
     border-top: none;

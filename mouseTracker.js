@@ -9,3 +9,6 @@ const getCursorPosition = function(x,y) {
 document,addEventListener('mousemove', f => {
     getCursorPosition(f.clientX, f.clientY);
 })
+
+
+
