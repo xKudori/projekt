@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+function updateSongLengths() {
     document.querySelectorAll('.songLength').forEach(function(element) {
         var audioPath = element.getAttribute('data-audio');
         var audio = new Audio(audioPath);
@@ -9,4 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
             element.textContent = minutes + ':' + seconds;
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateSongLengths();
+});
+
+document.addEventListener('htmx:afterSwap', function() {
+    updateSongLengths();
 });

@@ -382,6 +382,14 @@
         $searchedSongs = $this->getSearchQuerySongs();
         $a = 0;
 
+        /*$defaultPlaylistParam = 1;
+        if (!isset($_POST["query"])) {
+            $defaultPlaylistParam = sizeof($songs);
+        }
+        if ($defaultPlaylistParam == 0) {
+            echo "Playlist is empty";
+        } else {*/
+
         if (isset($_GET["x"]) && !isset($_GET["u"])) { 
             $x = $_GET["x"];
             $pType = $this->pTypeFromId($x);
@@ -391,6 +399,8 @@
         
             if ($pT->playlistType == "Local") {
                 $tempVal = "Local";
+            } else if ($pT->playlistType == "Liked") {
+                $tempVal = "Liked";
             } else {
                 $tempVal = "Public/Private";
             } 
@@ -400,13 +410,7 @@
             $pType = "User";
             $tempVal = "User";
         }
-        $defaultPlaylistParam = 1;
-        if (!isset($_POST["query"])) {
-            $defaultPlaylistParam = sizeof($songs);
-        }
-        if ($defaultPlaylistParam == 0) {
-            echo "Playlist is empty";
-        } else {
+        
         echo "<div class=\"songsContainer\">";
         echo "<table class=\"songTable\">";
         echo "<thead>";
@@ -518,8 +522,16 @@
                 echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
                 echo "</tr>";
             }
-            else {
+            else if ($tempVal == "Liked") {
                 echo "<form method=\"post\">";
+                echo "<tr class=\"s1\">";
+                echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Liked</button>" . "</td>"; 
+                echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
+                echo "<input type=\"hidden\" name=\"removepId\" value=\"$pId\"></input>";
+                echo "</tr>";
+            echo "</form>";
+            } else {
+            echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<button name=\"removeSong\" class=\"localTitle\" value=\"$songId\">Remove From Playlist</button>" . "</td>"; 
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
@@ -538,6 +550,7 @@
             global $a;
             $a = $a + 1;
             $songId = $song["song_id"];
+            echo $songId;
             $songName = $song["song_name"];
             $songPath = $song["audio_path"];
             $songImagePath = $song["image_path"];
@@ -559,9 +572,12 @@
             echo "<tbody>";
             echo "<tr class=\"s1\">";
             echo "<form method=\"post\">";
-            echo "<button name=\"insertIntoLiked\" class=\"localTitle\">Like Song</button>" . "</td>";
+            echo "<button name=\"insertIntoLiked\" class=\"localTitle\">Like Song</button>";
+            echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
             echo "</form>";
             echo "</tr>";
+
+            
 
             if ($_SESSION["username"] == "admin") {
                 echo "<form method=\"post\">";
@@ -569,13 +585,11 @@
                 echo "</form>";
             }
             foreach ($publicOrPrivatePlaylist as $p) {
-
                 echo "<tr class=\"s1\">";
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
                 echo "<input type=\"hidden\" name=\"insertSongId\" value=\"$songId\"></input>";
-                //echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
                 echo "</form>";
                 echo "</tr>";
         }
@@ -589,7 +603,7 @@
         echo "</tbody>";
         echo "</table>";
         echo "</div>";
-
+    
         if (((isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) || isset($_POST["insertIntoLiked"])) || isset($_POST["removeSong"]) || isset($_POST["changeSongName"]))  {
         if ((isset($_POST["insertIntoPlaylist"]) && !empty($_POST["insertIntoPlaylist"])) || isset($_POST["insertIntoLiked"])) {
             $songId = $_POST["insertSongId"];
@@ -679,7 +693,7 @@
             }
         }
         }
-    }
+    //}
     }
 
     private function deleteSong($newSongId) {
@@ -890,7 +904,7 @@
             }
             
 
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['playlist_id'])) {
                 $playlistId = $_POST['playlist_id'];
                 if ($playlistId == $currentPlaylistId) {
                     $same = true;
@@ -911,12 +925,12 @@
                     if (isset($_GET["songs"])) {
                         echo "<script>window.location.href = './account.php?u=$u&songs';</script>"; 
                     } else if (isset($_GET["playlist"])) {
-                        echo "<script>window.location.href = './account.php?u=$u&playlits';</script>"; 
+                        echo "<script>window.location.href = './account.php?u=$u&playlists';</script>"; 
                     } else {
                     echo "<script>window.location.href = './account.php?u=$u';</script>"; 
                     }
                 } else if (isset($_GET["query"])) {
-                    echo "<script>window.location.href = './searcj.php?query=$query';</script>"; 
+                    echo "<script>window.location.href = './search.php?query=$query';</script>"; 
                 } else {
                     echo "<script>window.location.href = './index.php';</script>"; 
                 }
@@ -954,7 +968,7 @@
                 echo "<script>window.location.href = './account.php?u=$u';</script>"; 
                 }
             } else if (isset($_GET["query"])) {
-                echo "<script>window.location.href = './searcj.php?query=$query';</script>"; 
+                //echo "<script>window.location.href = './search.php?query=$query';</script>"; 
             } else {
                 echo "<script>window.location.href = './index.php';</script>"; 
             }
