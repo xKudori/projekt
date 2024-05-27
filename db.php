@@ -382,10 +382,13 @@
         $searchedSongs = $this->getSearchQuerySongs();
         $a = 0;
 
-        /*$defaultPlaylistParam = 1;
+        //$defaultPlaylistParam = 1;
         if (!isset($_POST["query"])) {
             $defaultPlaylistParam = sizeof($songs);
+        } else {
+            $defaultPlaylistParam = sizeof($searchedSongs);
         }
+        /*
         if ($defaultPlaylistParam == 0) {
             echo "Playlist is empty";
         } else {*/
@@ -410,7 +413,9 @@
             $pType = "User";
             $tempVal = "User";
         }
-        
+        if ($defaultPlaylistParam == 0) {
+            echo "Playlist is empty";
+        } else {
         echo "<div class=\"songsContainer\">";
         echo "<table class=\"songTable\">";
         echo "<thead>";
@@ -423,6 +428,7 @@
         echo "</tr>";
         echo "</thead>";
         echo "<tbody>";
+        }
     if (isset($pType) && !isset($_GET["query"])) {
         foreach ($songs as $song) {
             global $a;
