@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/x-icon" href="moon3.png">
+    <link rel="icon" type="image/x-icon" href="./images/misc/moon3.png">
     <title>LunaChord</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
@@ -24,11 +24,11 @@
 <body>
     <section id="main">
         <?php
-            require_once("leftTab.php");
+            require_once("./site_parts/leftTab.php");
         ?>
         <section id="middleTab">
             <?php
-                require_once("navbar.php");
+                require_once("./site_parts/navbar.php");
             ?>
             <div class="displaySongs">
             <?php $x->playlistNameDisplayHtml(); 
@@ -54,8 +54,8 @@
             </div>
         </section>
         <?php
-            require_once("rightTab.php");
-            require_once("bottomTab.html");
+            require_once("./site_parts/rightTab.php");
+            require_once("./site_parts/bottomTab.html");
         ?>
         
 

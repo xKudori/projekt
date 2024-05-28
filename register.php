@@ -30,7 +30,7 @@
         <img src="moon.png" alt="moon" class="logo">
         <p class="luna">LunaChord</p>
     </div>
-    <script src="mouseTracker.js"></script>
-    <script src="regValidate.js"></script>
+    <script src="./JS/other/mouseTracker.js"></script>
+    <script src="./JS/validation/regValidate.js"></script>
 </body>
 </html>

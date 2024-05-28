@@ -19,7 +19,7 @@ echo "
 </table>
 ";
 } else if (isset($_GET["songs"])) {
-$x->songDisplayHtml();
+    $x->songDisplayHtml();
 }
 ?>
 

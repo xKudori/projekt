@@ -1,5 +1,5 @@
 <?php
-        require("./db.php");
+        require("../db.php");
 
         $x = new Db_Connection("localhost","music_site","root","");
 
