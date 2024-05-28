@@ -28,6 +28,6 @@
     </div>
         <script src="mouseTracker.js">
     </script>
-    <script src="loginValidate.js"></script>
+    <script src="./JS/validation/loginValidate.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
     session_start();
-    require("./db.php");
+    require("../db.php");
     $x = new Db_Connection("localhost","music_site","root","");
             if (isset($_POST["songSearchDisplay"])) {
                 $x->songDisplayHtml();

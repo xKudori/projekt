@@ -18,14 +18,14 @@
             <div id="SongUpload">
 
 
-                <form action="" hx-post="songInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
+                <form action="" hx-post="./htmx/songInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
                         <button name="btn1" class="button">Upload Song</button>
                         <?php
                         //echo "<input type=\"hidden\" name=\"id\" value=\"$id\"></input>";
                         ?>
                 </form>
                 <br>
-                <form action="" hx-post="localInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
+                <form action="" hx-post="./htmx/localInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
                         <button name="btn2" class="button">Upload files to Local Playlist</button>
                         <?php
                         //echo "<input type=\"hidden\" name=\"id\" value=\"$id\"></input>";
@@ -43,10 +43,6 @@
                     <input type="text" name="playlistName">
                     <br>
                     <br>
-                    <!--<label for="cover-art">Cover art: </label>
-                    <input type="file" name="cover-art">-
-                    <br>
-                    <br>-->
                     <label>Playlist type: </label>
                     <br>
                     <div class="type">
@@ -82,4 +78,4 @@
                 ?> 
             </div>
         </section>   
-        <script src="playlistValidate.js"></script>
+        <script src="./JS/validation/playlistValidate.js"></script>

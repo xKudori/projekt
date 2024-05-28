@@ -23,11 +23,11 @@
 <body>
     <section id="main">
         <?php
-            require_once("leftTab.php");
+            require_once("./site_parts/leftTab.php");
         ?>      
         <section id="middleTab">
         <?php
-            require_once("navbar.php");
+            require_once("./site_parts/navbar.php");
         ?>
             <div id="displayContainer">
                 <div id="displayUserName">
@@ -91,8 +91,8 @@
                     </form>";*/
                     $u = $_GET["u"];
                     if ($u != "admin") {
-                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
-                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./htmx/testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./htmx/testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
                     } else {
                         echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                     }
@@ -123,8 +123,8 @@
         </div>
         </section>
         <?php
-            require_once("rightTab.php");
-            require_once("bottomTab.html");
+            require_once("./site_parts/rightTab.php");
+            require_once("./site_parts/bottomTab.html");
         ?>
 
 </body>

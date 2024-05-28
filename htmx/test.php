@@ -3,7 +3,7 @@
 
 session_start();
 
-require("./db.php");
+require("../db.php");
 
 $x = new Db_Connection("localhost","music_site","root","");
 
@@ -11,7 +11,7 @@ $x = new Db_Connection("localhost","music_site","root","");
 if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
 
 
-    require_once("./navbar.php");
+    require_once("../site_parts/navbar.php");
 
     echo "
     <div class=\"displaySongs\">
@@ -30,7 +30,7 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
 
 } else if (!isset($_GET["x"]) && isset($_GET["u"]) && !isset($_GET["query"])) {
         $u = $_GET["u"];
-            require_once("navbar.php");
+            require_once("../site_parts/navbar.php");
             echo "
             <div id=\"displayContainer\">
                 <div id=\"displayUserName\">
@@ -86,8 +86,8 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                 <div id=\"displayChoice\">";
 
                 if ($u != "admin") {
-                    echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Songs</a>";
-                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Public Playlists</a>";
+                    echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./htmx/testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Songs</a>";
+                    echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./htmx/testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\"\">Public Playlists</a>";
                 } else {
                     echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                 }

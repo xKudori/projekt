@@ -11,13 +11,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = trim($_POST["password"]);
         $email = trim($_POST["email"]);
 
-        // Walidacja nazwy użytkownika
         if (strlen($username) < 6) {
             echo "Username must be at least 6 characters long.";
             exit();
         }
 
-        // Walidacja hasła
         if (!validatePassword($password)) {
             echo "Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.";
             exit();
