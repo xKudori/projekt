@@ -31,7 +31,7 @@
                 $q = $_GET["query"];
             ?>
             <div id="songsTitle">   
-            <form hx-post="queryDisplay.php" hx-trigger="click" hx-target="#queryResult" <?="hx-push-url=\"search.php?query=$q&songs\""?> hx-swap="innerHTML" method="post">
+            <form hx-post="queryDisplay.php" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">
                 <button name="songSearchDisplay" class="btn" id="songSearchDisplay" value="Songs">Songs</button>
                 <input type="hidden" name="query" value=<?=$_GET["query"]?>>
             </form>  

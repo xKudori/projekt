@@ -49,9 +49,17 @@
                             echo "<button><a href=\"logout.php\" class=\"logout\">Logout</a></button>";
                             echo "<form action=\"\" method=\"post\">
                                 <button name=\"deleteUser\">Delete Account</button>
-                            </form>";
-                            if (isset($_POST["deleteUser"])) {
+                                <br>
+                                </form>";
+                                echo "<form action=\"\" method=\"post\">
+                                <label for=\"newName\">Change Name: </label>
+                                <input type=\"text\" name=\"newName\">
+                                </form>";
+                            if (isset($_POST["deleteUser"]) && empty($_POST["newName"])) {
                                 $x->deleteUser($_GET["u"]);
+                            } else if (isset($_POST["newName"]) & empty($_POST["deleteUser"])) {
+                                $x->changeUserName($_SESSION["username"], $_POST["newName"]);
+                                $_SESSION["username"] = $_POST["newName"];
                             }
                         } 
                     } else {
@@ -83,22 +91,23 @@
                     </form>";*/
                     $u = $_GET["u"];
                     if ($u != "admin") {
-                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#displayTables\" hx-swap=\"innerHTML\">Songs</a>";
-                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#displayTables\" hx-swap=\"innerHTML\">Public Playlists</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&songs\" hx-push-url=\"account.php?u=$u&songs\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&songs\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Songs</a>";
+                        echo "<a class=\"button\" href=\"account.php?u=$u&playlists\" hx-push-url=\"account.php?u=$u&playlists\" hx-trigger=\"click\" hx-get=\"./testAcc.php?u=$u&playlists\" hx-target=\"#resultContainer\" hx-swap=\"innerHTML\">Public Playlists</a>";
                     } else {
                         echo "<a class=\"button\" href=\"logout.php\">Logout</a>";
                     }
                     ?>
                 </div>
             </div>
-            <div id="displayTables">
+
+            <div id="resultContainer">
                 <?php
                     if (isset($_GET["playlists"])) {
                         $u = $_GET["u"];
                         echo "<table id=\"userPublicPlaylists\">
                         <thead>
                             <tr>
-                                <th id=\"userPublicPlaylists\">$u's Public Playlists</th>
+                                <th id=\"headerTitle\">$u's Public Playlists</th>
                             </tr>
                         </thead>
                         <tbody>";

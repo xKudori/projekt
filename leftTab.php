@@ -38,7 +38,7 @@
             ?>
             <div id="createPlaylistTitle">Create Playlist</div>
             <div id="createPlaylist">
-                <form action="" method="post" id="f1" enctype="multipart/form-data">
+                <form action="" method="post" id="f1" enctype="multipart/form-data" onsubmit="return validatePlaylistData()">
                     <label for="playlistName">Playlist name: </label>
                     <input type="text" name="playlistName">
                     <br>
@@ -82,3 +82,4 @@
                 ?> 
             </div>
         </section>   
+        <script src="playlistValidate.js"></script>

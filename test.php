@@ -50,14 +50,18 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                     ";
                     if ($_SESSION["username"] == $_GET["u"]) {
                         if ($_GET["u"] != "admin" && $_SESSION["username"] != "admin") {
-                        echo "<button><a href=\"logout.php\" class=\"logout\">Logout</a></button>";
-                        echo "<form action=\"\" hx-post=\"account_del.php\" hx-trigger=\"click\" hx-target=\"body\" hx-swap=\"innerHTML\" method=\"post\">
-                            <button name=\"deleteUser\">Delete Account</button>
-                            <input type=\"hidden\" name=\"username\" value=\"$u\"></input>
-                        </form>";
-                        if (isset($_POST["deleteUser"])) {
-                            $x->deleteUser($_GET["u"]);
-                        }
+                            echo "<button><a href=\"logout.php\" class=\"logout\">Logout</a></button>";
+                            echo "<form action=\"\" method=\"post\">
+                                <button name=\"deleteUser\">Delete Account</button>
+                                <br>
+                                <label for=\"newName\">Change Name: </label>
+                                <input type=\"text\" name=\"newName\">
+                            </form>";
+                            if (isset($_POST["deleteUser"]) && empty($_POST["newName"])) {
+                                $x->deleteUser($_GET["u"]);
+                            } else if (isset($_POST["newName"]) & empty($_POST["deleteUser"])) {
+                                $x->changeUserName($_SESSION["username"], $newName);
+                            }
                     } 
                 } else {
                     if ($_GET["u"] != "admin" && $_SESSION["username"] == "admin") {

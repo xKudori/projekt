@@ -324,6 +324,43 @@
             throw $e;
         }
     }
+
+    public function changeUserName($oldUsername, $newUsername) {
+        try {
+            $userId = $this->getUserIdByName($oldUsername);
+    
+            $sql = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE username = :newUsername");
+            $sql->bindParam(":newUsername", $newUsername, PDO::PARAM_STR);
+            $sql->execute();
+            if ($sql->fetchColumn() > 0) {
+                throw new Exception("Username already taken.");
+            }
+    
+            $this->pdo->beginTransaction();
+    
+            $sql = $this->pdo->prepare("UPDATE users SET username = :newUsername WHERE user_id = :user_id");
+            $sql->bindParam(":newUsername", $newUsername, PDO::PARAM_STR);
+            $sql->bindParam(":user_id", $userId, PDO::PARAM_INT);
+            $sql->execute();
+    
+            $sql = $this->pdo->prepare("UPDATE playlists SET user = :newUsername WHERE user = :oldUsername");
+            $sql->bindParam(":newUsername", $newUsername, PDO::PARAM_STR);
+            $sql->bindParam(":oldUsername", $oldUsername, PDO::PARAM_STR);
+            $sql->execute();
+    
+            $sql = $this->pdo->prepare("UPDATE songs SET user = :newUsername WHERE user = :oldUsername");
+            $sql->bindParam(":newUsername", $newUsername, PDO::PARAM_STR);
+            $sql->bindParam(":oldUsername", $oldUsername, PDO::PARAM_STR);
+            $sql->execute();
+    
+            $this->pdo->commit();
+    
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
     public function playlistQueryDisplay() {
         $playlists = $this->getSearchQueryPlaylists();
         echo "<table class=\"playlistQueryTable\">";
@@ -404,17 +441,25 @@
                 $tempVal = "Local";
             } else if ($pT->playlistType == "Liked") {
                 $tempVal = "Liked";
-            } else {
-                $tempVal = "Public/Private";
-            } 
+            } else if ($pT->playlistType == "Public"){
+                $tempVal = "Public";
+            } else if ($pT->playlistType == "Private") {
+                $tempVal = "Private";
+            }
             
         } else if (isset($_GET["u"]) && !isset($_GET["x"])) {
             $x = $_GET["u"];
             $pType = "User";
             $tempVal = "User";
         }
+        $memVar = false;
         if ($defaultPlaylistParam == 0) {
+            if (($tempVal == "Local" || $tempVal == "Private" ||  $tempVal == "Liked") && $this->isUserPlaylist($_GET["x"]) == false) {
+                echo "Access Denied";
+                $memVar = true;
+            } else {
             echo "Playlist is empty";
+            }
         } else {
         echo "<div class=\"songsContainer\">";
         echo "<table class=\"songTable\">";
@@ -430,6 +475,11 @@
         echo "<tbody>";
         }
     if (isset($pType) && !isset($_GET["query"])) {
+            if (($tempVal == "Local" || $tempVal == "Private" || $tempVal == "User" || $tempVal == "Liked") && isset($_GET["x"]) && $this->isUserPlaylist($_GET["x"]) == false) {
+                if ($memVar == false) {
+                    echo "Access Denied";
+                }
+            } else {
         foreach ($songs as $song) {
             global $a;
             $a = $a + 1;
@@ -470,13 +520,12 @@
                 echo "</form>";
                 echo "</tr>";
             }
-        } else if ($tempVal == "Public/Private" || $tempVal == "User") {
+        } else if ($tempVal == "Public" || $tempVal == "Private" || $tempVal == "User") {
             foreach ($publicOrPrivatePlaylist as $p) {
-
                 echo "<tr class=\"s1\">";
                 echo "<form method=\"post\">";
                 echo "<td class=\"songId\">"; 
-                if ($tempVal == "Public/Private") {
+                if ($tempVal == "Public" || $tempVal == "Private") {
                     echo "<button name=\"insertIntoLiked\" class=\"localTitle\">Like Song</button>" . "</td>";
                 }
                 echo "<button name=\"insertIntoPlaylist\" class=\"localTitle\" value=\"$p->playlist_name\">$p->playlist_name</button>" . "</td>";
@@ -521,7 +570,7 @@
                 echo "<input type=\"hidden\" name=\"tempVal\" value=\"$tempVal\"></input>";
                 echo "</tr>";
             echo "</form>";
-            } else if ($tempVal == "Public/Private" && $this->isUserPlaylist($_GET["x"]) == false) {
+            } else if (($tempVal == "Public" || $tempVal == "Private") && $this->isUserPlaylist($_GET["x"]) == false) {
                 echo "<form method=\"post\">";
                 echo "<tr class=\"s1\">";
                 echo "<input type=\"hidden\" name=\"changeSongId\" value=\"$songId\"></input>";
@@ -551,12 +600,12 @@
             echo "</span>" . "</div>". "</td>";
             echo "</tr>";
         }  
+    }
     } else if (!isset($pType) && (isset($_GET["query"]) || isset($_POST["query"]))) {
         foreach ($searchedSongs as $song) {
             global $a;
             $a = $a + 1;
             $songId = $song["song_id"];
-            echo $songId;
             $songName = $song["song_name"];
             $songPath = $song["audio_path"];
             $songImagePath = $song["image_path"];

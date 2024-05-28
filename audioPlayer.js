@@ -98,9 +98,11 @@ function seekAudio() {
     console.log("Seek audio. New position:", newPosition, "Formatted:", lastKnownTime);
 
 
-    if (audio.paused) {
+    if (!audio.paused) {
         timer.stop();
         timer.start({ precision: 'secondTenths', startValues: { seconds: newPosition } });
+    } else {
+        timer.stop();
     }
 }
 

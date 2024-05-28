@@ -23,14 +23,14 @@
         <input type="email" id="email" name="email" required class="loginFormInput">
         <br>
         <br>
-        <button value="Register" class="send">Register</button>
+        <button type="submit" value="Register" class="send">Register</button>
     </form>
     <a href="login.php" class="loginf">Login to an existing account</a>
     <div class="logo">
         <img src="moon.png" alt="moon" class="logo">
         <p class="luna">LunaChord</p>
     </div>
-    <script src="mouseTracker.js">
-    </script>
+    <script src="mouseTracker.js"></script>
+    <script src="regValidate.js"></script>
 </body>
 </html>
