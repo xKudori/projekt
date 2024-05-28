@@ -2,17 +2,17 @@
     session_start();
     require("./db.php");
     $x = new Db_Connection("localhost","music_site","root","");
-
+    echo "<script src=\"localValidate.js\"></script>";
     echo "<a hx-trigger=\"click\" hx-get=\"./choiceDisplay.php\" hx-target=\"#SongUpload\" hx-swap=\"innerHTML\" class=\"btn\">Back</a>";
         
 
-    echo "<form action=\"\" class=\"f2\" enctype=\"multipart/form-data\" method=\"post\">";
+    echo "<form action=\"\" class=\"f2\" enctype=\"multipart/form-data\" method=\"post\" onsubmit=\"return validateForm()\">";
     //echo "<button name=\"esc\">Back</button> <br>";
         echo "<label for=\"audio-file\">Audio file: </label>
         <input type=\"file\" name=\"audio-file\" id=\"audio-file\" accept=\".ogg, .flac, .mp3\">
         <br>
         <label for=\"image\">Image file: </label>
-        <input type=\"file\" name=\"image\" id=\"audio-file\" accept=\".png, .jpg\">
+        <input type=\"file\" name=\"image\" id=\"img\" accept=\".png, .jpg\">
         <br>
         <br>
         <label for=\"songName\">Name:</label>
