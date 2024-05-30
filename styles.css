@@ -142,6 +142,13 @@ body .logtext{
     height: 90%;
     float: inline-start;
     color: #CED8E0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#scroll {
+    height: 54%;
+    overflow-y: auto;
 }
 
 #top {
@@ -225,7 +232,7 @@ body .logtext{
 }
 
 #userSongTable {
-    height: 40.5vh;
+    height: 60%;
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -302,6 +309,7 @@ input[type="range"] {
     align-items: center;
     width: 80%;
 }
+
 
 #bottomTab {
     clear: both;
@@ -447,9 +455,9 @@ input[type="range"] {
 }
 
 #like {
-    position: absolute;
-    left: 92vh;
-    top: 13vh;
+    position: fixed;
+    left: 95vh;
+    top: 18vh;
 }
 
 .helpText {
@@ -523,6 +531,15 @@ input[type="range"] {
     align-items: center;
     color: #CED8E0;
     border-left: 1px solid #333;
+}
+
+.ERR {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #CED8E0;
+    border-left: 1px solid #60017B;
+    border-right: 1px solid #60017B;
 }
 
 #localTitle {

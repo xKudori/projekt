@@ -1,7 +1,9 @@
 <?php
     session_start();
     require("./db.php");
-    $x = new Db_Connection("localhost","music_site","root","");
+    $x = new HTML_Display_Functions("localhost","music_site","root","");
+    $y = new SQL_Functions("localhost","music_site","root","");
+    
     if (!isset($_SESSION['username'])) {
         header("Location: login.php");
         exit();
@@ -31,7 +33,7 @@
                 $q = $_GET["query"];
             ?>
             <div id="songsTitle">   
-            <form hx-post="./htmx/queryDisplay.php" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">
+            <form hx-post="./htmx/queryDisplay.php" hx-push-url="./search.php?query=<?=$q?>&songs" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">
                 <button name="songSearchDisplay" class="btn" id="songSearchDisplay" value="Songs">Songs</button>
                 <input type="hidden" name="query" value=<?=$_GET["query"]?>>
             </form>  

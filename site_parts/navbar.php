@@ -1,6 +1,6 @@
 <div id="top">
     <?php
-        $userLikedId = $x->getUserLikedSongs();
+        $userLikedId = $x->getUserLikedSongs($_SESSION["username"]);
     echo "
     <a href=\"./index.php?x=$userLikedId\" id=\"homeContainer\" hx-push-url=\"./index.php?x=$userLikedId\" hx-trigger=\"click\" hx-get=\"./htmx/test.php?x=$userLikedId\" hx-target=\"#middleTab\" hx-swap=\"innerHTML\">
         Home

@@ -1,7 +1,9 @@
 <?php
     session_start();
     require("../db.php");
-    $x = new Db_Connection("localhost","music_site","root","");
+    $x = new HTML_Display_Functions("localhost","music_site","root","");
+    $y = new SQL_Functions("localhost","music_site","root","");
+    
             if (isset($_POST["songSearchDisplay"])) {
                 $x->songDisplayHtml();
             } 

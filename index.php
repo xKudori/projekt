@@ -2,7 +2,9 @@
     session_start();
     require("./db.php");
 
-    $x = new Db_Connection("localhost","music_site","root","");
+    $x = new HTML_Display_Functions("localhost","music_site","root","");
+    $y = new SQL_Functions("localhost","music_site","root","");
+    
     if (!isset($_SESSION['username'])) {
         header("Location: login.php");
         exit();
@@ -32,7 +34,7 @@
             ?>
             <div class="displaySongs">
             <?php $x->playlistNameDisplayHtml(); 
-                        if (isset($_GET["x"]) && $x->isUserPlaylist($_GET["x"]) == false && $x->isPlaylistLikedByUser($_GET["x"]) == false) {
+                        if (isset($_GET["x"]) && $x->isUserPlaylist($_GET["x"]) == false && $x->isPlaylistLikedByUser($_GET["x"]) == false ) {
                 $pId = $_GET["x"];
             echo"
             <form method=\"post\">

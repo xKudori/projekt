@@ -5,7 +5,8 @@ session_start();
 
 require("../db.php");
 
-$x = new Db_Connection("localhost","music_site","root","");
+$x = new HTML_Display_Functions("localhost","music_site","root","");
+$y = new SQL_Functions("localhost","music_site","root","");
 
 
 if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
@@ -95,7 +96,7 @@ if (isset($_GET["x"]) && !isset($_GET["u"]) && !isset($_GET["query"])) {
                 </div>
             </div>
         ";
-        echo "<div id=\"resultContainer\"";
+        echo "<div id=\"resultContainer\">";
 
     echo "
     </div>
