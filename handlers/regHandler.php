@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="icon" type="image/x-icon" href="./images/misc/moon3.png">
+    <title>LunaChord</title>
+</head>
+<body>
 <?php
 session_start();
 
@@ -21,16 +31,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
-        require_once("./db.php");
-        $x = new Db_Connection("localhost", "music_site", "root", "");
-        $userExists = $x->checkIfUserExists($username, $email);
+        require_once("../db.php");
+        $regObj = new SQL_Functions("localhost","music_site","root","");
+                
+        $userExists = $regObj->checkIfUserExists($username, $email);
         
         switch($userExists) {
             case false:
-                $success = $x->registerUser($username, $password, $email);
-                $x->createUserPlaylist($username, "User");
-                $x->createUserPlaylist($username, "Liked");
-                header("Location: login.php");
+                $success = $regObj->registerUser($username, $password, $email);
+                $regObj->createUserPlaylist($username, "User");
+                $regObj->createUserPlaylist($username, "Liked");
+                header("Location: ../login.php");
                 break;
             case true:
                 echo "User already exists. Please choose a different username or email.";
@@ -39,3 +50,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+</body>

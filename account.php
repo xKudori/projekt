@@ -1,7 +1,9 @@
 <?php
     session_start();
     require("./db.php");
-    $x = new Db_Connection("localhost","music_site","root","");
+    $x = new HTML_Display_Functions("localhost","music_site","root","");
+    $y = new SQL_Functions("localhost","music_site","root","");
+    
     if (!isset($_SESSION['username'])) {
         header("Location: login.php");
         exit();
@@ -19,6 +21,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
     <script src="./easyTimer/easytimer.js"></script>
+    <script src="./JS/other/scrollheight.js"></script>
 </head>
 <body>
     <section id="main">
@@ -99,7 +102,7 @@
                     ?>
                 </div>
             </div>
-
+            <div id="scroll">
             <div id="resultContainer">
                 <?php
                     if (isset($_GET["playlists"])) {
@@ -120,6 +123,7 @@
                         echo "</div>";
                     }
             ?>
+        </div>
         </div>
         </section>
         <?php

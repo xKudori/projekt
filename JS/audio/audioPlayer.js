@@ -54,8 +54,7 @@ function playNextSong() {
     if (currentIndex < playBtns.length) {
         playSong(currentIndex);
     } else {
-        audio.pause();
-        currentIndex = -1;
+        resetPlayer();
     }
 }
 
@@ -67,9 +66,11 @@ function playPreviousSong() {
 }
 
 audio.addEventListener("ended", function() {
-    playNextSong();
-    timer.stop();
-    timer.reset();
+    if (currentIndex + 1 < playBtns.length) {
+        playNextSong();
+    } else {
+        resetPlayer();
+    }
 });
 
 function pauseAudio() {
@@ -97,7 +98,6 @@ function seekAudio() {
     document.getElementById('timer').textContent = lastKnownTime; 
     console.log("Seek audio. New position:", newPosition, "Formatted:", lastKnownTime);
 
-
     if (!audio.paused) {
         timer.stop();
         timer.start({ precision: 'secondTenths', startValues: { seconds: newPosition } });
@@ -118,6 +118,17 @@ function formatTime(seconds) {
     return minutes.toString().padStart(2, '0') + ':' + remainingSeconds.toString().padStart(2, '0');
 }
 
+function resetPlayer() {
+    audio.pause();
+    audio.currentTime = 0;
+    seekSlider.value = 0;
+    document.getElementById('timer').textContent = "00:00";
+    timer.stop(); // Stop the timer
+    currentIndex = -1;
+    songNameElement.textContent = "No song is playing";
+    songImageElement.style.display = "none";
+}
+
 timer.addEventListener('secondsUpdated', function(e) {
     document.getElementById('timer').textContent = timer.getTimeValues().toString(['minutes', 'seconds']);
 });
@@ -127,13 +138,7 @@ timer.addEventListener('started', function(e) {
 });
 
 timer.addEventListener('reset', function(e) {
-    let timerElement = document.getElementById('timer');
-    if (!timerElement.textContent || timerElement.textContent.trim() === "") {
-        timerElement.textContent = lastKnownTime; 
-        console.log("Timer reset. Setting last known time:", lastKnownTime);
-    } else {
-        timerElement.textContent = timer.getTimeValues().toString(['minutes', 'seconds']);
-    }
+    document.getElementById('timer').textContent = "00:00";
 });
 
 document.getElementById('playBtn').addEventListener('click', function() {
