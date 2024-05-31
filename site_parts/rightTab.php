@@ -5,7 +5,7 @@
     </div>
     <div id="playlistSelection">
         <?php
-            $x->displayPlaylistsHtml();
+            $displayObj->displayPlaylistsHtml();
         ?>
     </div>
 </section> 

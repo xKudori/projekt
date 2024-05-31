@@ -16,18 +16,11 @@ document.addEventListener("DOMContentLoaded", function() {
         if (password === "") {
             alert("Password is required.");
             valid = false;
-        } else if (!validatePassword(password)) {
-            alert("Password must be at least 8 characters long, contain at least one uppercase letter, and one special character.");
-            valid = false;
-        }
+        } 
 
         if (!valid) {
             event.preventDefault();
         }
     });
 
-    function validatePassword(password) {
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\W).{8,}$/;
-        return passwordRegex.test(password);
-    }
 });

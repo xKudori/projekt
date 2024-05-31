@@ -25,6 +25,11 @@ if (timer) {
 audio = new Audio();
 timer = new easytimer.Timer();
 
+function resetAnimation() {
+    songImageElement.classList.remove('show');
+    songNameElement.classList.remove('show');
+}
+
 function playSong(index) {
     if (currentIndex !== -1 && currentIndex !== index) {
         audio.pause();
@@ -43,26 +48,38 @@ function playSong(index) {
 
     songNameElement.textContent = "Currently playing: " + songName;
     songImageElement.src = songImagePath;
+
+
     songImageElement.style.display = "block";
+    setTimeout(() => {
+        songImageElement.classList.add('show');
+        songNameElement.classList.add('show');
+    }, 200); 
 
     timer.stop();
     timer.start({ precision: 'secondTenths', startValues: { seconds: audio.currentTime } });
 }
 
 function playNextSong() {
-    currentIndex++;
-    if (currentIndex < playBtns.length) {
-        playSong(currentIndex);
-    } else {
-        resetPlayer();
-    }
+    resetAnimation();
+    setTimeout(function() {
+        currentIndex++;
+        if (currentIndex < playBtns.length) {
+            playSong(currentIndex);
+        } else {
+            resetPlayer();
+        }
+    }, 200); 
 }
 
 function playPreviousSong() {
-    if (currentIndex > 0) {
-        currentIndex--;
-        playSong(currentIndex);
-    }
+    resetAnimation();
+    setTimeout(function() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            playSong(currentIndex);
+        }
+    }, 200); 
 }
 
 audio.addEventListener("ended", function() {
@@ -123,7 +140,7 @@ function resetPlayer() {
     audio.currentTime = 0;
     seekSlider.value = 0;
     document.getElementById('timer').textContent = "00:00";
-    timer.stop(); // Stop the timer
+    timer.stop(); 
     currentIndex = -1;
     songNameElement.textContent = "No song is playing";
     songImageElement.style.display = "none";
@@ -159,11 +176,17 @@ seekSlider.addEventListener("mouseup", function() { seekSlider.dragging = false;
 vol.addEventListener("input", audioVolume);
 audio.addEventListener("timeupdate", updateSeekSlider);
 next.addEventListener("click", playNextSong);
-previous.addEventListener("dblclick", playPreviousSong);
+previous.addEventListener("click", playPreviousSong);
 
 playBtns.forEach(function(playBtn, index) {
     playBtn.addEventListener("click", function() {
-        playSong(index);
+
+        resetAnimation();
+
+
+        setTimeout(function() {
+            playSong(index);
+        }, 200); 
     });
 });
 
@@ -171,7 +194,13 @@ document.addEventListener("htmx:afterSwap", (event) => {
     let playBtns = document.querySelectorAll(".play");
     playBtns.forEach(function(playBtn, index) {
         playBtn.addEventListener("click", function() {
-            playSong(index);
+
+            resetAnimation();
+
+
+            setTimeout(function() {
+                playSong(index);
+            }, 200); 
         });
     });
 });

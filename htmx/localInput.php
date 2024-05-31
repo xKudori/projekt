@@ -1,11 +1,10 @@
+<script src="./JS/validation/songValidate.js"></script>
 <?php
     session_start();
     require("../db.php");
-    $x = new HTML_Display_Functions("localhost","music_site","root","");
-    $y = new SQL_Functions("localhost","music_site","root","");
+    $displayObj = new HTML_Display_Functions("localhost","music_site","root","");
     
-    echo "<script src=\"./JS/validation/localValidate.js\"></script>";
-    echo "<a hx-trigger=\"click\" hx-get=\"./htmx/choiceDisplay.php\" hx-target=\"#SongUpload\" hx-swap=\"innerHTML\" class=\"btn\">Back</a>";
+    echo "<a hx-trigger=\"click\" hx-get=\"./htmx/choiceDisplay.php\" hx-target=\"#SongUpload\" hx-swap=\"innerHTML\">Back</a>";
         
 
     echo "<form action=\"\" class=\"f2\" enctype=\"multipart/form-data\" method=\"post\" onsubmit=\"return validateForm()\">";
@@ -24,7 +23,7 @@
         <br>
         <div class=\"Help\">List of avilable playlists
         <span class=\"helpText\">";
-            echo $x->displayLocalPlaylists();
+            echo $displayObj->displayLocalPlaylists();
             echo "</span>
         </div>
         <br>

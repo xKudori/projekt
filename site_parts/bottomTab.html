@@ -20,3 +20,32 @@
     </div>
 </section>
 <script src="./JS/audio/audioPlayer.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnContainer = document.getElementById("btnContainer");
+    const buttons = btnContainer.getElementsByClassName("songBtn");
+
+    Array.from(buttons).forEach(button => {
+        button.addEventListener("mouseover", function() {
+            changeImageToWhite(this);
+        });
+
+        button.addEventListener("mouseout", function() {
+            revertImageToOriginal(this);
+        });
+    });
+
+    function changeImageToWhite(imgElement) {
+        const src = imgElement.getAttribute("src");
+        const whiteSrc = src.replace(/(\.\w+)$/, "-white.png");
+        imgElement.setAttribute("data-original-src", src);
+        imgElement.setAttribute("src", whiteSrc);
+    }
+
+    function revertImageToOriginal(imgElement) {
+        const originalSrc = imgElement.getAttribute("data-original-src");
+        imgElement.setAttribute("src", originalSrc);
+    }
+});
+
+</script>

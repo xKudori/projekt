@@ -1,8 +1,8 @@
 <?php
     session_start();
     require("./db.php");
-    $x = new HTML_Display_Functions("localhost","music_site","root","");
-    $y = new SQL_Functions("localhost","music_site","root","");
+    $displayObj = new HTML_Display_Functions("localhost","music_site","root","");
+    $dataObj = new SQL_Functions("localhost","music_site","root","");
     
     if (!isset($_SESSION['username'])) {
         header("Location: login.php");
@@ -16,11 +16,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/x-icon" href="moon3.png">
+    <link rel="icon" type="image/x-icon" href="./images/misc/moon3.png">
     <title>LunaChord</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
-    <script src="./easyTimer/easytimer.js"></script>
+    <script src="./JS/easyTimer/easytimer.js"></script>
 </head>
 <body>
     <section id="main">
@@ -42,32 +42,32 @@
                 <input type="hidden" name="query" value=<?=$_GET["query"]?>>
             </form>  
             <form hx-post="./htmx/queryDisplay.php" hx-trigger="click" hx-target="#queryResult" hx-swap="innerHTML" method="post">     
-                <button name="userSearchDisplay" class="btn" id="userSearchDisplay" value="Users">Users</button> 
+                <button name="userSearchDisplay" class="btn" id="userSearchDisplay" value="User">User</button> 
                 <input type="hidden" name="query" value=<?=$_GET["query"]?>>
             </form>
+            <div id="currentDisplay">
             <?php
                 $q = $_GET["query"];
                 if (isset($_GET["songs"])) {
-                    echo "<div id=\"currentDisplay\">Songs</div>";
+                    echo "Songs";
                 } else if (isset($_GET["playlists"])) {
-                    echo "<div id=\"currentDisplay\">Playlists</div>";
+                    echo "Playlists";
                 } else if (isset($_GET["users"])) {
-                    echo "<div id=\"currentDisplay\">Users</div>";
-                } else {
-                    echo "<div id=\"currentDisplay\"></div>";   
-                }
+                    echo "User";
+                } 
                 ?>
+            </div>
             </div>
             <div id="queryResult">
             <?php
             if (isset($_GET["songs"])) {
-                $x->songDisplayHtml();
+                $displayObj->songDisplayHtml();
             } 
             if (isset($_GET["playlists"])) {
-                $x->playlistQueryDisplay();
+                $displayObj->playlistQueryDisplay();
             } 
             if (isset($_GET["users"])) {
-                $x->userDisplayHtml();
+                $displayObj->userDisplayHtml();
             }
             ?>
             </div>
@@ -76,6 +76,23 @@
             require_once("./site_parts/rightTab.php");
             require_once("./site_parts/bottomTab.html");
         ?>
+    <script>
+        function displayButtonValue() {
+            var displayButtons = document.querySelectorAll('.btn');
+                displayButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        var value = button.value;
+                        document.getElementById('currentDisplay').innerText = value;
+                    });
+                });
+        }
+        document.addEventListener('htmx:afterSwap', function() {
+            displayButtonValue();
+        });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            displayButtonValue();
+        });
+    </script>
 </body>
 </html>

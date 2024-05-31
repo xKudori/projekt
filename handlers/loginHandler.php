@@ -27,7 +27,7 @@
                     header("Location: ../index.php?x=$likedId"); 
                     exit;
                 } else {
-                    echo "Incorrect username, email, or password. Please try again.";
+                    echo "Incorrect username or password. Please try again.";
                 }
             }
         }

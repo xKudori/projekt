@@ -2,13 +2,12 @@
 session_start();
 require("./db.php");
 
-$x = new Db_Connection("localhost","music_site","root","");
-$u = $_POST["username"];
+$dataObj = new SQL_Functions("localhost","music_site","root","");
+$u = $_SESSION["username"];
 
-if (isset($_POST["deleteUser"])) {
-    $x->deleteUser($u);
-    header("Location: ./logout.php");
-}
+$dataObj->deleteUser($u);
+header("Location: ./logout.php");
 
+unset($_SESSION["username"]);
 
 ?>

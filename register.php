@@ -9,8 +9,8 @@
 </head>
 <body>
 <h1 class="logtext">Register</h1>
-    <form action="./handlers/regHandler.php" class="fl" method="post">
-        <label for="username">Username:</label>
+    <form action="./handlers/regHandler.php" class="fl" method="post" enctype="multipart/form-data">
+    <label for="username">Username:</label>
         <br>
         <input type="text" id="username" name="username" required class="loginFormInput">
         <br>
@@ -21,6 +21,10 @@
         <label for="email">Email:</label>
         <br>
         <input type="email" id="email" name="email" required class="loginFormInput">
+        <br>
+        <label for="profile_picture">Profile Picture:</label>
+        <br>
+        <input type="file" id="profile_picture" name="profile_picture" accept=".png, .jpg" class="loginFormInput">
         <br>
         <br>
         <button type="submit" value="Register" class="send">Register</button>

@@ -10,7 +10,7 @@
             $temp = $_GET["query"];
         }
                         
-        //$id=$_GET["x"];
+
 
     ?>
             <div id="fInputTitle">Select File</div>
@@ -20,21 +20,15 @@
 
                 <form action="" hx-post="./htmx/songInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
                         <button name="btn1" class="button">Upload Song</button>
-                        <?php
-                        //echo "<input type=\"hidden\" name=\"id\" value=\"$id\"></input>";
-                        ?>
                 </form>
                 <br>
                 <form action="" hx-post="./htmx/localInput.php" hx-trigger="click" hx-target="#SongUpload" hx-swap="innerHTML" method="post" class="f2" enctype="multipart/form-data">
                         <button name="btn2" class="button">Upload files to Local Playlist</button>
-                        <?php
-                        //echo "<input type=\"hidden\" name=\"id\" value=\"$id\"></input>";
-                        ?>
                 </form>
             </div>
             </div>
             <?php
-                $x->getSongData();
+                $dataObj->getSongData();
             ?>
             <div id="createPlaylistTitle">Create Playlist</div>
             <div id="createPlaylist">
@@ -74,7 +68,7 @@
                     <button name="Create">Create</button>
                 </form>
                 <?php
-                    $x->getPlaylistData();
+                    $dataObj->getPlaylistData();
                 ?> 
             </div>
         </section>   
