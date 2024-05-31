@@ -9,6 +9,7 @@ body {
     justify-content: center;
     font-family: 'Lato', sans-serif;
     color: #CED8E0;
+    overflow: hidden;
 }
 
 body .logtext{
@@ -76,9 +77,18 @@ body .logtext{
     color: #CED8E0;
 }
 
-#fInputTitle, #createPlaylistTitle, #playlistSelectionTitle {
+#fInputTitle, #createPlaylistTitle {
     height: 10%;
     border: 1px solid #60017B;
+    color: #CED8E0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#playlistSelectionTitle {
+    height: 10%;
+    border-bottom: 1px solid #60017B;
     color: #CED8E0;
     display: flex;
     align-items: center;
@@ -113,8 +123,19 @@ body .logtext{
     border: 2px solid #60017B; 
 }
 
-#fInput, #createPlaylist {
+#fInput {
     height: 39.7%;
+    display: flex;
+    border: 1px solid #60017B;
+    border-top: none;
+    border-bottom: none;
+    align-items: center;
+    justify-content: center;
+    overflow-y: hidden;
+}
+
+#createPlaylist {
+    height: 40%;
     display: flex;
     border: 1px solid #60017B;
     border-top: none;
@@ -129,6 +150,8 @@ body .logtext{
     height: 90%;
     float: right;
     color: #CED8E0;
+    border: 1px solid #60017B;
+    border-bottom: none;
 }
 
 #playlistSelection {
@@ -148,7 +171,6 @@ body .logtext{
 
 #scroll {
     height: 54%;
-    overflow-y: auto;
 }
 
 #top {
@@ -313,7 +335,7 @@ input[type="range"] {
 
 #bottomTab {
     clear: both;
-    height: 10%;
+    height: 9.5%;
     width: auto;
     border: 1px solid #60017B;
     display: flex;
@@ -323,7 +345,7 @@ input[type="range"] {
 }
 
 #btnContainer {
-    margin: 7%;
+    margin: 8% 6% 8% 8%;
     display: flex;
     background: rgba(249, 79, 230, 0.8);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -351,6 +373,19 @@ input[type="range"] {
     width: 40%;
     height: 100%;
     margin-left: 10%;
+}
+
+#songImage,
+#songName {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+#songImage.show,
+#songName.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 #vol {
@@ -415,6 +450,15 @@ input[type="range"] {
 
 }
 
+.play:hover {
+    color: black;
+}
+
+
+#profile_picture {
+    width: 82px;
+    height: 25px;
+}
 
 .playlistTable th, .playlistTable td {
     width: 100%;
@@ -462,6 +506,7 @@ input[type="range"] {
 
 .helpText {
     width: 0;
+    height: auto;
     transition: width 0.4s;
     visibility: hidden;
     text-align: center;
@@ -473,14 +518,16 @@ input[type="range"] {
 
 .helpText2 {
     width: 0;
-    transition: width 0.4s;
+    transition: width 0.4s, top 0.4s, left 0.4s; 
     visibility: hidden;
     text-align: center;
-    position: absolute;
+    position: fixed;
     z-index: 1;
     background-color: #0D1B27;
-    overflow: hidden; 
+    overflow: hidden;
+    transform: translate(0, var(--translateY, 0px));
 }
+
 
 .Help:hover .helpText {
     width: 16vh;
@@ -503,7 +550,7 @@ input[type="range"] {
 }
 
 .userPlaylists {
-    border: 1px solid #60017B;  
+    border-bottom: 1px solid #60017B;  
     height: 6vh;
     border-top: none;
     color: #CED8E0;
@@ -553,12 +600,13 @@ input[type="range"] {
     color: #CED8E0;
 }
 button{ 
-    color:#000000; 
+    color: white;
     font: bold 84% 'trebuchet ms',helvetica,sans-serif; 
     background-color:#a008bf;
     border: #7908bf;
     border-radius: 7px;
 } 
+
 
 .send {
     display: block;
@@ -598,6 +646,24 @@ button{
     background-color: #1d1864;
 }
 
+.btn {
+    display: block;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 50px;
+    background-color:#a008bf;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    color:white;
+    font-size: 30px;
+    transition: background-color 0.5s;
+}
+
+.btn:hover {
+    background-color: #1d1864;
+}
+
 #playBtn{
   margin-right: 1px;
   margin-left: 5px;
@@ -613,8 +679,8 @@ input, textarea {
 }
 
 #displayUserName {
-    width: 50%;
-    border-bottom: 1px solid #60017B;
+    width: 30%;
+
 }
 
 #displayContainer {
@@ -624,17 +690,31 @@ input, textarea {
 }
 
 #displayChoice {
-    width: 50%;
-    border-bottom: 1px solid #60017B;
+    width: 55%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 20px;
+}
+
+#displayPfp {
+
 }
 
 #accusername {
+    display: flex;
+    flex-direction: row;
     font-size: 50px;
     margin: 0 20px 0 0; 
+}
+
+#userImage {
+    border: 1px;
+    border-radius: 20%;
+    margin: 16px;
+    width: 130px;
+    height: 130px;
 }
 
 #userPublicPlaylists {
@@ -693,7 +773,6 @@ input, textarea {
 
 .playlistsContainer {
     height: auto;
-    border: 1px solid #60017B;
     border-bottom: none;
     border-top: none;
 }
@@ -730,5 +809,5 @@ input, textarea {
 
 .logout {
     text-decoration: none;
-    color: black;
+    color: white;
 }

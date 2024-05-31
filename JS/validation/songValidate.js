@@ -1,10 +1,9 @@
-function validateForm() {
+function validateUserSongForm() {
     const audioFile = document.getElementById("audio-file").files;
-    const imageFile = document.getElementById("img").files;
     const songName = document.querySelector("input[name='songName']").value.trim();
 
-    if (audioFile.length === 0 || imageFile.length === 0) {
-        alert("Please select both audio and image files.");
+    if (audioFile.length === 0) {
+        alert("Please select audio file.");
         return false;
     }
 

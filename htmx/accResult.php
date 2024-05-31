@@ -1,9 +1,8 @@
-<script src="./JS/other/scrollheight.js"></script>
 <?php
         require("../db.php");
 
-        $x = new HTML_Display_Functions("localhost","music_site","root","");
-        $y = new SQL_Functions("localhost","music_site","root","");
+        $displayObj = new HTML_Display_Functions("localhost","music_site","root","");
+        $dataObj = new SQL_Functions("localhost","music_site","root","");
         
         session_start();        
         $u = $_GET["u"];
@@ -16,14 +15,14 @@
                 </tr>
             </thead>
             <tbody>";
-                $x->displayPublicPlaylists();
+                $displayObj->displayPublicPlaylists();
                 echo "
             </tbody>
         </table>
             ";
             } else if (isset($_GET["songs"])) {
                 echo "<div id=\"userSongTable\">";
-                $x->songDisplayHtml();
+                $displayObj->songDisplayHtml();
                 echo "</div>";
         }
 ?>

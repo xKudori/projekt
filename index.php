@@ -2,8 +2,8 @@
     session_start();
     require("./db.php");
 
-    $x = new HTML_Display_Functions("localhost","music_site","root","");
-    $y = new SQL_Functions("localhost","music_site","root","");
+    $displayObj = new HTML_Display_Functions("localhost","music_site","root","");
+    $dataObj = new SQL_Functions("localhost","music_site","root","");
     
     if (!isset($_SESSION['username'])) {
         header("Location: login.php");
@@ -21,7 +21,7 @@
     <title>LunaChord</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
-    <script src="./easyTimer/easytimer.js"></script>
+    <script src="./JS/easyTimer/easytimer.js"></script>
 </head>
 <body>
     <section id="main">
@@ -33,15 +33,15 @@
                 require_once("./site_parts/navbar.php");
             ?>
             <div class="displaySongs">
-            <?php $x->playlistNameDisplayHtml(); 
-                        if (isset($_GET["x"]) && $x->isUserPlaylist($_GET["x"]) == false && $x->isPlaylistLikedByUser($_GET["x"]) == false ) {
+            <?php $displayObj->playlistNameDisplayHtml(); 
+                        if ((isset($_GET["x"]) && $dataObj->isUserPlaylist($_GET["x"]) == false && $dataObj->isPlaylistLikedByUser($_GET["x"]) == false ) && $dataObj->isPlaylistPublic($_GET["x"]) == true)  {
                 $pId = $_GET["x"];
             echo"
             <form method=\"post\">
-            <button name=\"likePlaylist\" value=\"$pId\" id=\"like\">Like</button>
+                <button name=\"likePlaylist\" value=\"$pId\" id=\"like\">Like</button>
             </form>";
             if (isset($_POST["likePlaylist"])) {
-            $x->likePlaylist($pId);
+            $dataObj->likePlaylist($pId);
             echo "<script>window.location.href = './index.php?x=$pId';</script>"; 
             }
 
@@ -50,7 +50,7 @@
                 <form action="" method="post">
                     <?php                   
                     $tempVal=1;  
-                        $x->songDisplayHtml();
+                        $displayObj->songDisplayHtml();
                     ?>
                 </form>
             </div>

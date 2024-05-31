@@ -1,12 +1,13 @@
+<script src="./JS/validation/songValidate.js"></script>
 <?php
     session_start();
     require("../db.php");
-    $x = new HTML_Display_Functions("localhost","music_site","root","");
-    $y = new SQL_Functions("localhost","music_site","root","");
+    $displayObj = new HTML_Display_Functions("localhost","music_site","root","");
+    $dataObj = new SQL_Functions("localhost","music_site","root","");
     
-    echo "<script src=\"./JS/validation/songValidate.js\"></script>";
-    echo "<a hx-trigger=\"click\" hx-get=\"./htmx/choiceDisplay.php\" hx-target=\"#SongUpload\" hx-swap=\"innerHTML\" class=\"btn\">Back</a>";
-    echo "<form action=\"\" onsubmit=\"return validateForm()\" method=\"post\" class=\"f2\" enctype=\"multipart/form-data\">";
+
+    echo "<a hx-trigger=\"click\" hx-get=\"./htmx/choiceDisplay.php\" hx-target=\"#SongUpload\" hx-swap=\"innerHTML\">Back</a>";
+    echo "<form action=\"\" onsubmit=\"return validateUserSongForm()\" method=\"post\" class=\"f2\" enctype=\"multipart/form-data\">";
         echo "
         <br>
         <label for=\"audio-file\">Audio file: </label>
